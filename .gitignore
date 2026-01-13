@@ -1,0 +1,25 @@
+# Ignore vscode
+.vscode/
+
+# Windows
+Thumbs.db
+
+# Things Python
+.venv/
+.mypy_chache/
+__pycache__/
+
+# Temp files
+*.log
+*.Temp
+*.bak
+
+# Secret files
+.env
+.env.local
+secrets.json
+config.json
+
+# Data Base
+*.sqlite
+*.sqlite3
