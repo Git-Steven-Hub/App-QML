@@ -1,7 +1,5 @@
 ¡Hi everyone!
 
-¡Hi everyone!
-
 This an app what I made with Python, QML and MySQLite3.
 
 The function of this app is drive all archives, orders, users, etc of a burger locale.
