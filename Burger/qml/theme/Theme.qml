@@ -5,10 +5,11 @@ QtObject {
     // Brand
     property color primary: "#2D6AE3"
     property color secondary: "#F59E0B"
+    property color surface: "#111111"
 
     // Base UI
     property color background: "#F1F5F9"
-    property color card: "#000000"
+    property color card: "#648e96"
     property color divider: "#E5E7EB"
 
     // Text

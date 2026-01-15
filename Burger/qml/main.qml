@@ -5,8 +5,8 @@ import "views"
 
 ApplicationWindow {
     id: app
-    width: 500
-    height: 700
+    width: 550
+    height: 500
     visible: true
     title: "Burger App"
     color: Theme.background
@@ -17,44 +17,15 @@ ApplicationWindow {
         id: stack
         anchors.fill: parent
 
+        Rectangle {
+            anchors.fill: parent
+            color: Theme.background
+            z: -1
+        }
+
         initialItem: LoginView {}
-
-        replaceEnter: Transition {
-            ParallelAnimation {
-                NumberAnimation {
-                    property: "x"
-                    from: stack.width
-                    to: 0
-                    duration: 260
-                    easing.type: Easing.OutCubic
-                }
-                NumberAnimation {
-                    property: "opacity"
-                    from: 0
-                    to: 1
-                    duration: 200
-                }
-            }
-        }
-
-        replaceExit: Transition {
-            ParallelAnimation {
-                NumberAnimation {
-                    property: "x"
-                    from: 0
-                    to: -stack.width
-                    duration: 220
-                    easing.type: Easing.InCubic
-                }
-                NumberAnimation {
-                    property: "opacity"
-                    from: 1
-                    to: 0
-                    duration: 160
-                }
-            }
-        }
     }
+
     Rectangle {
         anchors.fill: parent
         visible: app.loading
