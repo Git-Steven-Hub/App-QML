@@ -1,20 +1,38 @@
 # Ignore vscode
 .vscode/
+.history/
 
 # Windows
 Thumbs.db
+Desktop.ini
 
 # Things Python
 .venv/
-.mypy_chache/
+.mypy_cache/
 __pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+.pytest_cache/
 
-# Temp files
+# QT / QML
+.qmlcache/
+.qmake.stash
+*.qmlc
+
+#  Build files
+build/
+dist/
+*.spec
+
+# Logs / Temp files
 *.log
-*.Temp
+*.temp
 *.bak
+*.tmp
 
-# Secret files
+# Secrets / Config
 .env
 .env.local
 secrets.json

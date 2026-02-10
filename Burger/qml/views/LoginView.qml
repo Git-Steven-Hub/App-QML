@@ -1,102 +1,152 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "../components"
 import "../theme"
+import "../components"
 
-AnimatedPage {
+Item {
+    width: parent ? parent.width : 1024
+    height: parent ? parent.height : 768
 
-        RowLayout {
-            anchors.fill: parent
-            spacing: 0
+    RowLayout {
+        anchors.fill: parent
+        spacing: 0
 
-                //  PANEL IZQUIERDO  //
-            Rectangle {
-                Layout.preferredWidth: 180
-                Layout.fillHeight: true
-                color: Theme.primary
-
-                Column {
-                    anchors.centerIn: parent
-                    spacing: 12
-
-                    Label {
-                        text: "🍔"
-                        font.pixelSize: 48
-                        horizontalAlignment: Text.AlignHCenter
-                    }
-
-                    Label {
-                        text: "Burger App"
-                        color: "white"
-                        font.pixelSize: 18
-                        font.weight: Font.Bold
-                        horizontalAlignment: Text.AlignHCenter
-                    }
-
-                    Label {
-                        text: "Sistema de ventas"
-                        color: "#DCE3FF"
-                        font.pixelSize: Theme.fontSmall
-                        horizontalAlignment: Text.AlignHCenter
-                    }
-                }
-            }
-
-                //  PANEL DERECHO  //
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                color: Theme.background
+        //Contenido izquierda
+        Rectangle {
+            Layout.preferredWidth: 300
+            Layout.fillHeight: true
+            color: Theme.secondary
+            
+            Item {
+                anchors.fill: parent
 
                 ColumnLayout {
                     anchors.centerIn: parent
-                    width: 280
-                    spacing: Theme.spacing * 1.2
+                    opacity: 1
 
-                    Label {
-                        text: "Iniciar sesión"
-                        font.pixelSize: Theme.fontTintle
-                        font.weight: Font.DemiBold
-                        color: Theme.textPrimary
+                    Text {
+                        id: titleText
                         Layout.alignment: Qt.AlignHCenter
+                        text: "🍔 Burger App"
+                        color: "white"
+                        font.pixelSize: 36
+                        opacity: 1
+                    }
+                }
+            }
+        }
+        //Contenido derecha
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            color: Theme.primary
+
+            Item {
+                anchors.fill: parent
+
+                ColumnLayout {
+                    anchors.centerIn: parent
+                    spacing: 16
+                    opacity: 1
+                    Behavior on opacity {
+                        NumberAnimation { duration: 200 }
                     }
 
                     AppInput {
                         placeholderText: "Usuario"
-                        Layout.fillWidth: true
+                        inputWidth: 250
+                        Layout.alignment: Qt.AlignCenter
                     }
 
                     AppInput {
                         placeholderText: "Contraseña"
+                        inputWidth: 250
                         echoMode: TextInput.Password
-                        Layout.fillWidth: true
+                        Layout.alignment: Qt.AlignCenter
                     }
 
                     AppButton {
+                        id: buttonApp
+                        Layout.alignment: Qt.AlignHCenter
                         text: "Ingresar"
-                        Layout.fillWidth: true
-                        height: 42
-                        onClicked: stack.push(Qt.resolvedUrl("HomeView.qml"))
+                        opacity: 1
+                        implicitWidth: 250
+                        
+                        onClicked: {
+                            if (window.stackView) {
+                            window.stackView.replace(Qt.resolvedUrl("HomeView.qml"))
+                            }
+                        }
                     }
 
                     RowLayout {
-                        Layout.fillWidth: true
-                        spacing: Theme.spacing
+                        spacing: Theme.padding * 2
 
                         AppButton {
+                            Layout.alignment: Qt.AlignVCenter
                             text: "Admin"
-                            flat: true
+                            implicitWidth: 100
+                        }
+
+                        Item {
                             Layout.fillWidth: true
                         }
 
                         AppButton {
-                            text: "Salir"
-                            flat: true
-                            Layout.fillWidth: true
+                            Layout.alignment: Qt.AlignVCenter
+                            text: "Cerrar"
+                            implicitWidth: 100
+                            
+                            onClicked: {
+                                Qt.quit()
+                            }
                         }
                     }
                 }
             }
         }
     }
+}
+
+    ////Animación////
+    // Rectangle {
+    //     id: revealMask
+    //     anchors.centerIn: parent
+    //     color: Theme.background
+    //     scale: 1.0
+    //     transformOrigin: Item.Center
+    //     z: 10
+
+    //     Behavior on scale {
+    //         NumberAnimation {
+    //             duration: 420
+    //             easing.type: Easing.OutCubic
+    //         }
+    //     }
+    // }
+
+
+    // SequentialAnimation {
+    //     running: true
+
+    //     ScriptAction {
+    //         script: content.opacity = 1.0
+    //     }
+
+    //     NumberAnimation {
+    //         target: revealMask
+    //         property: "scale"
+    //         from: 1.0
+    //         to: 0.0
+    //     }
+
+    //     ScriptAction {
+    //         script: {
+    //             titleText.opacity = 1.0
+    //             titleText.y = 0
+    //             buttonApp.opacity = 1.0
+    //             buttonApp.y = 0
+    //         }
+    //     }
+    // }
