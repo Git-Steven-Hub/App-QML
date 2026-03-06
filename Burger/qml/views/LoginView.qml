@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
 import "../theme"
 import "../components"
@@ -36,11 +35,12 @@ Item {
                 }
             }
         }
+
         //Contenido derecha
         Rectangle {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            color: Theme.primary
+            color: Theme.background
 
             Item {
                 anchors.fill: parent
@@ -50,7 +50,9 @@ Item {
                     spacing: 16
                     opacity: 1
                     Behavior on opacity {
-                        NumberAnimation { duration: 200 }
+                        NumberAnimation { 
+                            duration: 200
+                        }
                     }
 
                     AppInput {
@@ -70,6 +72,7 @@ Item {
                         id: buttonApp
                         Layout.alignment: Qt.AlignHCenter
                         text: "Ingresar"
+                        baseColor: Theme.buttonPrimary
                         opacity: 1
                         implicitWidth: 250
                         
@@ -87,6 +90,7 @@ Item {
                             Layout.alignment: Qt.AlignVCenter
                             text: "Admin"
                             implicitWidth: 100
+                            baseColor: Theme.buttonSecondary
                         }
 
                         Item {
@@ -97,6 +101,7 @@ Item {
                             Layout.alignment: Qt.AlignVCenter
                             text: "Cerrar"
                             implicitWidth: 100
+                            baseColor: Theme.buttonSecondary
                             
                             onClicked: {
                                 Qt.quit()
@@ -108,45 +113,3 @@ Item {
         }
     }
 }
-
-    ////Animación////
-    // Rectangle {
-    //     id: revealMask
-    //     anchors.centerIn: parent
-    //     color: Theme.background
-    //     scale: 1.0
-    //     transformOrigin: Item.Center
-    //     z: 10
-
-    //     Behavior on scale {
-    //         NumberAnimation {
-    //             duration: 420
-    //             easing.type: Easing.OutCubic
-    //         }
-    //     }
-    // }
-
-
-    // SequentialAnimation {
-    //     running: true
-
-    //     ScriptAction {
-    //         script: content.opacity = 1.0
-    //     }
-
-    //     NumberAnimation {
-    //         target: revealMask
-    //         property: "scale"
-    //         from: 1.0
-    //         to: 0.0
-    //     }
-
-    //     ScriptAction {
-    //         script: {
-    //             titleText.opacity = 1.0
-    //             titleText.y = 0
-    //             buttonApp.opacity = 1.0
-    //             buttonApp.y = 0
-    //         }
-    //     }
-    // }

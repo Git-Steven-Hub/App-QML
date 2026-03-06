@@ -1,39 +1,65 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Effects
 import "../theme"
 
 Button {
     id: root
-    property color baseColor: Theme.secondary
+
+    property color baseColor: Theme.buttonPrimary
+    property color textColor: "white"
+    property bool elevated: true
+
+    font.pixelSize: 14
+    font.weight: Font.Medium
+
+    HoverHandler {
+        cursorShape: Qt.PointingHandCursor
+    }
 
     contentItem: Text {
         text: root.text
         font: root.font
-        color: "white"
+        color: root.enabled ? root.textColor : Theme.textMuted
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         elide: Text.ElideRight
     }
-    
-    background: Rectangle {
-        color: root.hovered  ? Qt.darker(root.baseColor, 1.2) :
-                root.pressed ? Qt.lighter(root.baseColor, 1.2) : 
-                                root.baseColor
 
+    background: Rectangle {
         radius: Theme.radiusLarge
 
-        border.color: root.hovered ? root.baseColor : "transparent"
-        border.width: root.hovered ? 2 : 0
+        color: !root.enabled
+            ? Qt.darker(root.baseColor, 1.4)
+            : root.pressed
+                ? Qt.darker(root.baseColor, 1.3)
+                : root.hovered
+                    ? Qt.lighter(root.baseColor, 1.1)
+                    : root.baseColor
 
-        Behavior on color {
-            ColorAnimation { duration: 120 }
+        border.color: root.hovered ? Qt.lighter(root.baseColor, 1.4) : "transparent"
+        border.width: root.hovered ? 1 : 0
+
+        layer.enabled: root.elevated
+        layer.effect: MultiEffect {
+            shadowEnabled: true
+            shadowColor: "#66000000"
+            shadowBlur: 12
+            shadowVerticalOffset: 4
         }
-        Behavior on border.color {
-            ColorAnimation { duration: 120 }
+
+        Behavior on color { 
+            ColorAnimation { 
+                duration: 150
+            } 
         }
     }
-    scale: pressed ? 0.97 : hovered ? 1.03 : 1.0
+
+    scale: pressed ? 0.97 : hovered ? 1.02 : 1.0
+
     Behavior on scale { 
-        NumberAnimation { duration: 100 }
+        NumberAnimation { 
+            duration: 90
+        }
     }
 }

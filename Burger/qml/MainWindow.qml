@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
 import QtQuick.Controls.Material 2.12
 import "./theme"
 
@@ -14,7 +13,6 @@ ApplicationWindow {
     title: "Burger App"
     color: Theme.background
     opacity: 0.0
-
 
     Behavior on opacity {
         NumberAnimation {

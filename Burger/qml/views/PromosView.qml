@@ -4,12 +4,15 @@ import QtQuick.Layouts
 import QtQuick.Controls.Material 2.12
 import "../theme"
 import "../components"
+import "../data" as Data
 
 Item {
     id: root
     anchors.fill: parent
 
-    property int currentCategory: 1
+    property string currentCategory: "Hamburguesas"
+    property var categories: Data.ProductsData.categories
+    property var allProducts: Data.ProductsData.allProducts
 
     RowLayout {
         anchors.fill: parent
@@ -39,19 +42,19 @@ Item {
                         spacing: 8
                         
                         Repeater {
-                            model: CategoriesModel
+                            model: root.categories
                             
                             AppButton {
-                                text: model.categoryIcon + " " + model.categoryName
+                                text: modelData.icon + " " + modelData.name
                                 Layout.fillWidth: true
                                 Layout.preferredHeight: 60
                                 font.pixelSize: 15
-                                baseColor: root.currentCategory === model.categoryId
+                                baseColor: root.currentCategory === modelData.name 
                                     ? Theme.primary 
                                     : Theme.buttonSecondary
                                 
                                 onClicked: {
-                                    root.currentCategory = model.categoryId
+                                    root.currentCategory = modelData.name
                                 }
                             }
                         }
@@ -75,7 +78,7 @@ Item {
                         
                         ScrollBar.vertical: ScrollBar { 
                             policy: ScrollBar.AsNeeded
-                            visible: false 
+                             visible: false 
                         }
                         
                         Flow {
@@ -85,11 +88,11 @@ Item {
                             property int columns: 4
 
                             Repeater {
-                                model: ProductsModel
+                                model: root.allProducts.length
 
                                 delegate: Item {
                                     // Oculto los items para que el Flow no los reserve
-                                    visible: model.productCategoryId === root.currentCategory
+                                    visible: root.allProducts[index].category === root.currentCategory
 
                                     // Con esto calculo el ancho según las columnas
                                     width: Math.floor((gridProductos.width - (gridProductos.columns - 1) * gridProductos.spacing) / gridProductos.columns)
@@ -98,27 +101,14 @@ Item {
                                         id: card
                                         width: parent.width
 
-                                        productId: model.productId
-                                        productCategoryId: model.productCategoryId
-                                        productCategoryName: model.productCategoryName
-                                        productName: model.productName
-                                        productPrice: model.productPrice
-                                        productImage: model.productIcon
+                                        productId: root.allProducts[index].id
+                                        productName: root.allProducts[index].name
+                                        productPrice: root.allProducts[index].price
+                                        productImage: root.allProducts[index].image
                                         accentColor: Theme.primary
 
                                         onClicked: {
-                                            // notesDialog.productId = productId
-                                            // notesDialog.productName = productName
-                                            // notesDialog.productPrice = productPrice
-                                            // notesDialog.open()
-
-                                            CartModel.addProduct(
-                                                productId,
-                                                productCategoryId,
-                                                productCategoryName,
-                                                productName,
-                                                productPrice
-                                            )
+                                            root.addToCart(root.allProducts[index])
                                         }
                                     }
 
@@ -127,9 +117,6 @@ Item {
                             }
                         }
                     }
-                }
-                NotesDialog {
-                    id: notesDialog
                 }
             }
         }
