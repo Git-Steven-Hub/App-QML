@@ -207,7 +207,7 @@ Item {
                                 Layout.preferredWidth: 80
                             }
                         }
-
+                    
                         MouseArea {
                             anchors.fill: parent
                             hoverEnabled: true
@@ -311,6 +311,7 @@ Item {
 
             Text {
                 text: root.selectedOrder ? "Pedido #" + root.selectedOrder.orderId : ""
+                Layout.alignment: Qt.AlignHCenter
                 font.pixelSize: 20
                 font.bold: true
                 color: "white"
@@ -318,6 +319,7 @@ Item {
 
             Text {
                 text: root.selectedOrder ? "Hora: " + root.selectedOrder.time : ""
+                Layout.alignment: Qt.AlignHCenter
                 color: Theme.textSecondary
             }
 
@@ -328,27 +330,44 @@ Item {
             }
 
             Text {
-                text: root.selectedOrder ? "$" + root.selectedOrder.total : ""
+                text: root.selectedOrder ? "Total del pedido $" + root.selectedOrder.total : ""
+                Layout.alignment: Qt.AlignHCenter
                 font.pixelSize: 18
                 font.bold: true
                 color: Theme.accent
             }
 
+            Text {
+                text: "SECCIÓN                 PRODUCTO                    CANTIDAD         PRECIO"
+                color: Theme.textMuted
+                Layout.preferredWidth: 80
+                font.pixelSize: 10
+                font.bold: true
+            }
+
+            Rectangle {
+                Layout.fillWidth: true
+                height: 1
+                color: Theme.surfaceAlt
+            }
 
             ListView {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 300
                 model: OrderItemsModel
+                clip: true
+
+                boundsBehavior: Flickable.StopAtBounds
 
                 delegate: Rectangle {
                     width: ListView.view.width
                     height: 40
                     color: Qt.rgba(1, 1, 1, 0.05)
-                    
+
                     RowLayout {
                         anchors.fill: parent
                         anchors.margins: 8
-                        
+
                         Text {
                             text: model.categoryName
                             color: Theme.textMuted
@@ -362,10 +381,11 @@ Item {
                             font.bold: true
                             Layout.fillWidth: true
                         }
-                        
+
                         Text {
                             text: "x" + model.Quantity
                             color: Theme.textMuted
+                            Layout.preferredWidth: 80
                         }
                         
                         Text {
@@ -376,6 +396,7 @@ Item {
                 }
             }
 
+            Item { Layout.fillHeight: true }
 
             RowLayout {
                 Layout.fillWidth: true
