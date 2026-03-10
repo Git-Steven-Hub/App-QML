@@ -9,18 +9,63 @@ Rectangle {
     color: Theme.surface
     
     ColumnLayout {
+        Layout.alignment: Qt.AlignHCenter
         anchors.fill: parent
         anchors.margins: 16
         spacing: 12
         
         Text {
+            width: implicitWidth
             text: "RESUMEN DEL PEDIDO"
             font.pixelSize: 16
             font.bold: true
             color: Theme.divider
-            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignHCenter
+            
         }
         
+        Rectangle {
+            height: 1
+            Layout.fillWidth: true
+            color: Qt.rgba(1, 1, 1, 0.2)
+        }
+
+        Text {
+            text: "DATOS DEL CLIENTE"
+            Layout.alignment: Qt.AlignHCenter
+            font.pixelSize: 16
+            font.bold: true
+            color: Theme.divider
+            width: implicitWidth
+        }
+
+        ColumnLayout {
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignHCenter
+            spacing: 10
+
+            TextField {
+                id: client_name
+                placeholderText: "Nombre del cliente"
+                Layout.alignment: Qt.AlignHCenter
+                Layout.preferredWidth: 200
+            }
+
+            TextField {
+                id: client_phone
+                placeholderText: "Telefono"
+                Layout.alignment: Qt.AlignHCenter
+                Layout.preferredWidth: 200
+            }
+
+            ComboBox {
+                id: payment_method
+                Layout.alignment: Qt.AlignHCenter
+                Layout.preferredWidth: 200
+                model: ["Efectivo", "Transferencia", "Tarjeta"]
+            }
+        }
+
         Rectangle {
             height: 1
             Layout.fillWidth: true
@@ -130,7 +175,7 @@ Rectangle {
             font.pixelSize: 14
 
             onClicked: {
-                CartModel.confirmOrder()
+                CartModel.confirmOrder(client_name.text, client_phone.text, payment_method.currentText)
                 SalesModel.load_orders()
             }
         }

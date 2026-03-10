@@ -4,15 +4,12 @@ import QtQuick.Layouts
 import QtQuick.Controls.Material 2.12
 import "../theme"
 import "../components"
-import "../data" as Data
 
 Item {
     id: root
     anchors.fill: parent
 
-    property string currentCategory: "Hamburguesas"
-    property var categories: Data.ProductsData.categories
-    property var allProducts: Data.ProductsData.allProducts
+    property int currentCategory: 1
 
     RowLayout {
         anchors.fill: parent
@@ -42,19 +39,19 @@ Item {
                         spacing: 8
                         
                         Repeater {
-                            model: root.categories
+                            model: CategoriesModel
                             
                             AppButton {
-                                text: modelData.icon + " " + modelData.name
+                                text: model.categoryIcon + " " + model.categoryName
                                 Layout.fillWidth: true
                                 Layout.preferredHeight: 60
                                 font.pixelSize: 15
-                                baseColor: root.currentCategory === modelData.name 
+                                baseColor: root.currentCategory === model.categoryId
                                     ? Theme.primary 
                                     : Theme.buttonSecondary
                                 
                                 onClicked: {
-                                    root.currentCategory = modelData.name
+                                    root.currentCategory = model.categoryId
                                 }
                             }
                         }
@@ -88,11 +85,11 @@ Item {
                             property int columns: 4
 
                             Repeater {
-                                model: root.allProducts.length
+                                model: ProductsModel
 
                                 delegate: Item {
                                     // Oculto los items para que el Flow no los reserve
-                                    visible: root.allProducts[index].category === root.currentCategory
+                                    visible: model.productCategoryId === root.currentCategory
 
                                     // Con esto calculo el ancho según las columnas
                                     width: Math.floor((gridProductos.width - (gridProductos.columns - 1) * gridProductos.spacing) / gridProductos.columns)
@@ -101,14 +98,22 @@ Item {
                                         id: card
                                         width: parent.width
 
-                                        productId: root.allProducts[index].id
-                                        productName: root.allProducts[index].name
-                                        productPrice: root.allProducts[index].price
-                                        productImage: root.allProducts[index].image
+                                        productId: model.productId
+                                        productCategoryId: model.productCategoryId
+                                        productCategoryName: model.productCategoryName
+                                        productName: model.productName
+                                        productPrice: model.productPrice
+                                        productImage: model.productIcon
                                         accentColor: Theme.primary
 
                                         onClicked: {
-                                            root.addToCart(root.allProducts[index])
+                                            CartModel.addProduct(
+                                                productId,
+                                                productCategoryId,
+                                                productCategoryName,
+                                                productName,
+                                                productPrice
+                                            )
                                         }
                                     }
 

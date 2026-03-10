@@ -106,6 +106,9 @@ class DataBase:
             CREATE TABLE IF NOT EXISTS orders (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 datetime TEXT,
+                client_name TEXT,
+                client_phone INTEGER,
+                payment_method TEXT,
                 total REAL,
                 status TEXT
                 )
@@ -120,6 +123,7 @@ class DataBase:
                 category_id INTEGER,
                 category_name TEXT NOT NULL,
                 name TEXT,
+                notes TEXT,
                 unit_price REAL,
                 quantity INTEGER,
                 FOREIGN KEY (order_id) REFERENCES orders(id)
@@ -142,23 +146,24 @@ class DataBase:
         
         return self.cursor.fetchall()
     
-    def insert_order(self, items, total, status="En curso"):
+    def insert_order(self, items, client_name, client_phone, payment_method, total, status="En curso"):
         now = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
         
         self.cursor.execute('''
-                INSERT INTO orders (datetime, total, status) VALUES (?, ? ,?)''',
-                (now, total, status))
+                INSERT INTO orders (datetime, client_name, client_phone, payment_method, total, status) VALUES (?, ?, ?, ?, ? ,?)''',
+                (now, client_name, client_phone, payment_method, total, status))
         
         order_id = self.cursor.lastrowid
         
         for item in items:
             self.cursor.execute('''
-                INSERT INTO orders_items (order_id, item_id, item_type, category_id, category_name, name, unit_price, quantity) VALUES (?, ?, ?, ?, ?, ?, ?, ?)''',
+                INSERT INTO orders_items (order_id, item_id, item_type, category_id, category_name, name, notes, unit_price, quantity) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)''',
                 (order_id, item["item_id"],
                  item["item_type"],
                  item["category_id"],
                  item["category_name"],
                  item["name"],
+                 item["notes"],
                  item["unit_price"],
                  item["quantity"])
                 )
@@ -188,7 +193,7 @@ class DataBase:
         
         self.connection.commit()
         
-    # def close_system(self):
-    #     if hasattr(self, "connection"):
-    #         self.connection.commit()
-    #         self.connection.close()
+    def close_system(self):
+        if hasattr(self, "connection"):
+            self.connection.commit()
+            self.connection.close()

@@ -107,18 +107,20 @@ Item {
                                         accentColor: Theme.primary
 
                                         onClicked: {
-                                            // notesDialog.productId = productId
-                                            // notesDialog.productName = productName
-                                            // notesDialog.productPrice = productPrice
-                                            // notesDialog.open()
+                                            notesDialog.productId = productId
+                                            notesDialog.productName = productName
+                                            notesDialog.productPrice = productPrice
+                                            notesDialog.productCategoryId = productCategoryId
+                                            notesDialog.productCategoryName = productCategoryName
+                                            notesDialog.open()
 
-                                            CartModel.addProduct(
-                                                productId,
-                                                productCategoryId,
-                                                productCategoryName,
-                                                productName,
-                                                productPrice
-                                            )
+                                            // CartModel.addProduct(
+                                            //     productId,
+                                            //     productCategoryId,
+                                            //     productCategoryName,
+                                            //     productName,
+                                            //     productPrice
+                                            // )
                                         }
                                     }
 

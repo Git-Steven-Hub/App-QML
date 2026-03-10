@@ -9,6 +9,7 @@ from models.cart_model import CartModel
 from models.order_items_model import OrderItemsModel
 from models.products_model import ProductsModel
 from models.categories_model import CategoriesModel
+from database.database_manager import DataBase
 from pathlib import Path
 
 os.environ["QT_QUICK_CONTROLS_STYLE"] = "Basic"
@@ -23,6 +24,7 @@ def main():
 
 	engine = QQmlApplicationEngine()
 
+	db = DataBase()
 	products_model = ProductsModel()
 	categories_model = CategoriesModel()
 	cart_model = CartModel()
@@ -46,7 +48,10 @@ def main():
 	if not engine.rootObjects():
 		sys.exit(-1)
 
+	app.aboutToQuit.connect(db.close_system)
 	sys.exit(app.exec())
+
+	
 
 if __name__ == "__main__":
 	main()

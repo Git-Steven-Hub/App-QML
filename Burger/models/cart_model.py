@@ -10,6 +10,7 @@ class CartModel(QAbstractListModel):
     QuantityRole = Qt.UserRole + 4
     CategoryIdRole = Qt.UserRole + 5
     CategoryNameRole = Qt.UserRole + 6
+    NotesRole = Qt.UserRole + 7
 
     totalChanged = Signal()
     
@@ -45,6 +46,9 @@ class CartModel(QAbstractListModel):
         
         if role == self.CategoryNameRole:
             return item["category_name"]
+        
+        if role == self.NotesRole:
+            return item["notes"]
 
         return None
     
@@ -56,6 +60,7 @@ class CartModel(QAbstractListModel):
             self.QuantityRole: QByteArray(b"Quantity"),
             self.CategoryIdRole: QByteArray(b"category_id"),
             self.CategoryNameRole: QByteArray(b"category_name"),
+            self.NotesRole: QByteArray(b"notes"),
         }
     
     def getTotal(self):
@@ -67,8 +72,8 @@ class CartModel(QAbstractListModel):
     
     total = Property(float, getTotal, notify=totalChanged)
     
-    @Slot(str, int, str, str, float)
-    def addProduct(self, product_id, category_id, category_name, name, price):
+    @Slot(str, int, str, str, str, float)
+    def addProduct(self, product_id, category_id, category_name, name, notes, price):
         """
         Función que se encarga de añadir los productos. 
         Itera con un for en _items[], si encuentra que el Id es el mismo que de algún producto,
@@ -92,6 +97,7 @@ class CartModel(QAbstractListModel):
             "CategoryId": category_id,
             "CategoryName": category_name,
             "Name": name,
+            "Notes": notes,
             "Price": price,
             "Quantity": 1,
         })
@@ -107,8 +113,8 @@ class CartModel(QAbstractListModel):
             self.endRemoveRows()
             self.totalChanged.emit()
 
-    @Slot()
-    def confirmOrder(self):
+    @Slot(str, str, str)
+    def confirmOrder(self, client_name="", client_phone="", payment_method="Efectivo"):
         if not self._items:
             return
         
@@ -122,11 +128,12 @@ class CartModel(QAbstractListModel):
                 "category_id": item["CategoryId"],
                 "category_name": item["CategoryName"],
                 "name": item["Name"],
+                "notes": item["Notes"],
                 "unit_price": item["Price"],
                 "quantity": item["Quantity"]
             })
         
-        self.db.insert_order(items_to_save, total)
+        self.db.insert_order(items_to_save, client_name, client_phone, payment_method, total)
         
         self.clear()
 
