@@ -44,18 +44,18 @@ Rectangle {
             Layout.alignment: Qt.AlignHCenter
             spacing: 10
 
-            TextField {
+            AppInput {
                 id: client_name
                 placeholderText: "Nombre del cliente"
                 Layout.alignment: Qt.AlignHCenter
-                Layout.preferredWidth: 200
+                inputWidth: 200
             }
 
-            TextField {
+            AppInput {
                 id: client_phone
                 placeholderText: "Telefono"
                 Layout.alignment: Qt.AlignHCenter
-                Layout.preferredWidth: 200
+                inputWidth: 200
             }
 
             ComboBox {

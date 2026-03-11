@@ -24,6 +24,9 @@ QtObject {
     property color warning: "#bebc21"
     property color success: "#25ac47"
 
+    //CheckBox
+    property color checkBox: "#4CAF50"
+
     //Text
     property color textPrimary: "#0F172A"
     property color textSecondary: "#475569"

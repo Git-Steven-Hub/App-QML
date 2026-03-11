@@ -68,6 +68,15 @@ class DataBase:
                 icon TEXT
                 )
             ''')
+        
+        self.cursor.execute('''
+            CREATE TABLE IF NOT EXISTS categories_notes (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                category_id INTEGER,
+                note TEXT,
+                FOREIGN KEY (category_id) REFERENCES categories(id)
+                )
+            ''')
                 
         self.cursor.execute('''
             CREATE TABLE IF NOT EXISTS products (
@@ -145,6 +154,14 @@ class DataBase:
             ''')
         
         return self.cursor.fetchall()
+    
+    def get_category_notes(self, category_id):
+        data = self.load_json_data()
+        
+        for category in data["categories"]:
+            if category["id"] == category_id:
+                return category.get("notes", [])
+        return []
     
     def insert_order(self, items, client_name, client_phone, payment_method, total, status="En curso"):
         now = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")

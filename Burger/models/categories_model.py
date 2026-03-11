@@ -6,6 +6,7 @@ class CategoriesModel(QAbstractListModel):
     CategoryIdRole = Qt.UserRole + 1
     CategoryNameRole = Qt.UserRole + 2
     CategoryIconRole = Qt.UserRole + 3
+    CategoryNotesRole = Qt.UserRole + 4
     
     def __init__(self):
         super().__init__()
@@ -20,18 +21,25 @@ class CategoriesModel(QAbstractListModel):
     def load_categories(self):
         self.beginResetModel()
         self.categories.clear()
+            
+        json_data = self.db.load_json_data()
         
-        rows = self.db.get_categories()
-        
-        for row in rows:
-            category = {
-                "id" : row[0],
-                "name" : row[1],
-                "icon" : row[2]
-            }
-            self.categories.append(category)
-        
+        for notes in json_data["categories"]:
+            self.categories.append({
+                "categoryId": notes["id"],
+                "categoryName": notes["name"],
+                "categoryIcon": notes["icon"],
+                "categoryNotes": notes.get("notes", [])
+            })
+            
         self.endResetModel()
+        
+    @Slot(int, result=list)
+    def get_category_notes(self, category_id):
+        for category in self.categories:
+            if category.get("categoryId") == category_id:
+                return category.get("categoryNotes", [])
+        return []
         
     def rowCount(self, parent=QModelIndex()):
         if parent.isValid():
@@ -46,17 +54,21 @@ class CategoriesModel(QAbstractListModel):
         category = self.categories[index.row()]
         
         if role == self.CategoryIdRole:
-            return category["id"]
+            return category.get("categoryId")
         
         if role == self.CategoryNameRole:
-            return category["name"]
+            return category.get("categoryName")
         
         if role == self.CategoryIconRole:
-            return category["icon"]
+            return category.get("categoryIcon")
+        
+        if role == self.CategoryNotesRole:
+            return category.get("categoryNotes", [])
         
     def roleNames(self):
         return {
             self.CategoryIdRole: QByteArray(b"categoryId"),
             self.CategoryNameRole: QByteArray(b"categoryName"),
             self.CategoryIconRole: QByteArray(b"categoryIcon"),
+            self.CategoryNotesRole: QByteArray(b"categoryNotes"),
         }
