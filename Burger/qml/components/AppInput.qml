@@ -11,6 +11,7 @@ ColumnLayout {
     property alias placeholderText: field.placeholderText
     property alias echoMode: field.echoMode
     property real inputWidth: 100
+    property alias validator: field.validator
 
     TextField {
         id: field

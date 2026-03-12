@@ -76,12 +76,12 @@ class CartModel(QAbstractListModel):
     def addProduct(self, product_id, category_id, category_name, name, notes, price):
         """
         Función que se encarga de añadir los productos. 
-        Itera con un for en _items[], si encuentra que el Id es el mismo que de algún producto,
+        Itera con un for en _items[], si encuentra que el Id y las notas son el mismo que de algún producto,
         lo suma a la cantidad y emite una señal para que cambie en vivo en QML.
         Luego de eso inserta las filas correspondientes y los items son agregados.
         """
         for row, item in enumerate(self._items):
-            if item["Id"] == product_id:
+            if item["Id"] == product_id and item["Notes"] == notes:
                 item["Quantity"] += 1
                 
                 index = self.index(row)

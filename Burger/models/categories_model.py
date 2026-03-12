@@ -36,6 +36,8 @@ class CategoriesModel(QAbstractListModel):
         
     @Slot(int, result=list)
     def get_category_notes(self, category_id):
+        category_id = int(category_id)
+        
         for category in self.categories:
             if category.get("categoryId") == category_id:
                 return category.get("categoryNotes", [])

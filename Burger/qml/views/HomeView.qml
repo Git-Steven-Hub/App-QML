@@ -128,6 +128,7 @@ Item {
                         easing.type: Easing.OutQuad
                     } 
                 }
+                
                 Behavior on scale { 
                     NumberAnimation { 
                     duration: 320

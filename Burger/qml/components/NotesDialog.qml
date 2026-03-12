@@ -8,6 +8,7 @@ Dialog {
     anchors.centerIn: parent
     id: dialog
     padding: 20
+    visible: false
 
     property string productId
     property string productName
@@ -22,6 +23,21 @@ Dialog {
     }
 
     onOpened: {
+        if (visible) {
+            scaleAnimation.start()
+            fadeAnimation.start()
+        }
+
+        for (let i = 0; i < notesListColumn.children.length; i++) {
+            let child = notesListColumn.children[i]
+            if (child.checked !== undefined) {
+                child.checked = false
+            }
+        }
+        textPersonalized.text = ""
+    }
+
+    onClosed: {
         for (let i = 0; i < notesListColumn.children.length; i++) {
             let child = notesListColumn.children[i]
             if (child.checked !== undefined) {
@@ -30,6 +46,24 @@ Dialog {
         }
     }
 
+    NumberAnimation {
+        id: scaleAnimation
+        target: dialog
+        property: "scale"
+        from: 0.8
+        to: 1
+        duration: 200
+        easing.type: Easing.OutBack
+    }
+    
+    NumberAnimation {
+        id: fadeAnimation
+        target: dialog
+        property: "opacity"
+        from: 0
+        to: 1
+        duration: 150
+    }
 
     Column {
         id: notesColumn
@@ -56,6 +90,18 @@ Dialog {
                     property string noteText: modelData
                 }
             }
+
+            AppInput {
+                id: textPersonalized
+                placeholderText: "Especifícaciones personalizadas"
+                inputWidth: 250
+            }
+        }
+
+        Rectangle {
+        height: 1
+        Layout.fillWidth: true
+        color: Qt.rgba(1, 1, 1, 0.2)
         }
 
         RowLayout {
@@ -64,15 +110,24 @@ Dialog {
 
             AppButton {
                 text: "Agregar notas"
+                implicitWidth: 125
                 onClicked: {
                     let notesList = []
+
                     for (let i = 0; i < notesListColumn.children.length; i++) {
                         let child = notesListColumn.children[i]
                         if (child.checked && child.noteText) {
                             notesList.push(child.noteText)
                         }
                     }
+
+                    if (textPersonalized.text.trim() !== "") {
+                        let text = textPersonalized.text.trim().toLowerCase()
+                        notesList.push(text.replace(/\b\w/g, l => l.toUpperCase()))
+                    }
+
                     let notes = notesList.join(", ")
+                    
                     CartModel.addProduct(
                         dialog.productId,
                         dialog.productCategoryId,
@@ -85,8 +140,11 @@ Dialog {
                 }
             }
 
+            Item { Layout.fillWidth: true }
+
             AppButton {
                 text: "Sin notas"
+                implicitWidth: 100
                 onClicked: {
                     CartModel.addProduct(
                         dialog.productId,

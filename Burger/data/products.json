@@ -1,7 +1,7 @@
 { "categories": [
     { "id": 1, "name": "Hamburguesas", "icon": "🍔", "notes": ["Medallón extra", "Con mayonesa de ajo", "Sin cebolla", "Sin mayonesa de ajo"] },
     { "id": 2, "name": "Pizzas", "icon": "🍕", "notes": ["Huevo extra", "Con aceitunas verdes"] },
-    { "id": 3, "name": "Lomitos", "icon": "👑" },
+    { "id": 3, "name": "Lomitos", "icon": "👑", "notes": ["Sin lechuga", "Sin tomate", "Con huevo", "Con panceta"] },
     { "id": 4, "name": "Pachatas", "icon": "👑" },
     { "id": 5, "name": "Fritas", "icon": "🍟" },
     { "id": 6, "name": "Bebidas", "icon": "🥛" }

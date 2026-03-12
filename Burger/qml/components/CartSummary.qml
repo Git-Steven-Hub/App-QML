@@ -5,9 +5,8 @@ import "../theme"
 
 Rectangle {
     id: root
-    
     color: Theme.surface
-    
+
     ColumnLayout {
         Layout.alignment: Qt.AlignHCenter
         anchors.fill: parent
@@ -56,6 +55,7 @@ Rectangle {
                 placeholderText: "Telefono"
                 Layout.alignment: Qt.AlignHCenter
                 inputWidth: 200
+                validator: IntValidator { }
             }
 
             ComboBox {
@@ -175,8 +175,15 @@ Rectangle {
             font.pixelSize: 14
 
             onClicked: {
-                CartModel.confirmOrder(client_name.text, client_phone.text, payment_method.currentText)
+
+                if (client_name.text.trim() !== "" && client_phone.text.trim() !== "") {
+                    CartModel.confirmOrder(client_name.text, client_phone.text, payment_method.currentText)
+                    }
+
+                CartModel.confirmOrder("Sin datos", "Sin datos", payment_method.currentText)
                 SalesModel.load_orders()
+                client_name.text = ""
+                client_phone.text = ""
             }
         }
     }

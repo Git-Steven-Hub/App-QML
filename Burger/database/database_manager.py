@@ -53,6 +53,12 @@ class DataBase:
                     (category["id"], category["name"], category["icon"])
                 )
             
+            if "notes" in category:
+                for note in category["notes"]:
+                    self.cursor.execute('''
+                                INSERT INTO categories_notes (category_id, notes) VALUES (?, ?)''',
+                                (category["id"], note))
+            
         for product in data["products"]:
             self.cursor.execute('''
                     INSERT INTO products (id, category_id, category_name, name, price, image) VALUES (?, ?, ?, ?, ?, ?)''',
@@ -73,7 +79,7 @@ class DataBase:
             CREATE TABLE IF NOT EXISTS categories_notes (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 category_id INTEGER,
-                note TEXT,
+                notes TEXT,
                 FOREIGN KEY (category_id) REFERENCES categories(id)
                 )
             ''')

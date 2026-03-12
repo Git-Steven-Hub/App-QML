@@ -115,14 +115,6 @@ Item {
                                             notesDialog.currentNotes = CategoriesModel.get_category_notes(productCategoryId)
 
                                             notesDialog.open()
-
-                                            // CartModel.addProduct(
-                                            //     productId,
-                                            //     productCategoryId,
-                                            //     productCategoryName,
-                                            //     productName,
-                                            //     productPrice
-                                            // )
                                         }
                                     }
 
