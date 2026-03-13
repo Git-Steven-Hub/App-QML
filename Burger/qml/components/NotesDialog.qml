@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Effects
+import QtQuick.Dialogs
 import QtQuick.Controls
 import "../theme"
 
@@ -126,6 +126,11 @@ Dialog {
                         notesList.push(text.replace(/\b\w/g, l => l.toUpperCase()))
                     }
 
+                    if (notesList.length === 0) {
+                        warningDialog.open()
+                        return
+                    }
+
                     let notes = notesList.join(", ")
                     
                     CartModel.addProduct(
@@ -158,5 +163,13 @@ Dialog {
                 }
             }
         }
+    }
+
+    AlertDialog {
+        id: warningDialog
+        dialogType: "warning"
+        titleText: "¡Atención!"
+        messageText: "Seleccioná al menos una nota"
+        buttonText: "Aceptar"
     }
 }

@@ -20,7 +20,6 @@ Rectangle {
             font.bold: true
             color: Theme.divider
             Layout.alignment: Qt.AlignHCenter
-            
         }
         
         Rectangle {
@@ -58,9 +57,8 @@ Rectangle {
                 validator: IntValidator { }
             }
 
-            ComboBox {
+            CustomComboBox {
                 id: payment_method
-                Layout.alignment: Qt.AlignHCenter
                 Layout.preferredWidth: 200
                 model: ["Efectivo", "Transferencia", "Tarjeta"]
             }
@@ -72,6 +70,15 @@ Rectangle {
             color: Qt.rgba(1, 1, 1, 0.2)
         }
         
+        Text {
+            width: implicitWidth
+            text: "ITEMS"
+            Layout.alignment: Qt.AlignHCenter
+            font.pixelSize: 16
+            font.bold: true
+            color: Theme.divider
+        }
+
         //Listado de los items
         ListView {
             Layout.fillWidth: true
@@ -97,7 +104,7 @@ Rectangle {
                         spacing: 2
 
                         Text {
-                            text: Name
+                            text: Name + (notes && notes !== "Sin notas" ? " (Con nota)" : "") 
                             color: "white"
                             font.bold: true
                             font.pixelSize: 12
@@ -175,16 +182,32 @@ Rectangle {
             font.pixelSize: 14
 
             onClicked: {
+                if (CartModel.rowCount() === 0) {
+                    return
+                }
 
-                if (client_name.text.trim() !== "" && client_phone.text.trim() !== "") {
-                    CartModel.confirmOrder(client_name.text, client_phone.text, payment_method.currentText)
-                    }
+                let name = client_name.text.trim() !== "" ? client_name.text : "Sin datos"
+                let phone = client_phone.text.trim() !== "" ? client_phone.text : "Sin datos"
 
-                CartModel.confirmOrder("Sin datos", "Sin datos", payment_method.currentText)
-                SalesModel.load_orders()
-                client_name.text = ""
-                client_phone.text = ""
+                confirmDialog.clientName = name
+                confirmDialog.clientPhone = phone
+                confirmDialog.paymentMethod = payment_method.currentText
+                confirmDialog.total = CartModel.total
+                confirmDialog.clientData = { name: name, phone: phone, method: payment_method.currentText }
+                confirmDialog.open()
             }
+        }
+    }
+
+    ConfirmDialog {
+        id: confirmDialog
+        titleText: "Datos del pedido"
+
+        onConfirmWithData: (data) => {
+            CartModel.confirmOrder(data.name, data.phone, data.method)
+            SalesModel.load_orders()
+            client_name.text = ""
+            client_phone.text = ""
         }
     }
 }

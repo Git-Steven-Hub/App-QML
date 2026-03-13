@@ -48,7 +48,7 @@ class CartModel(QAbstractListModel):
             return item["category_name"]
         
         if role == self.NotesRole:
-            return item["notes"]
+            return item.get("notes", "")
 
         return None
     
@@ -81,7 +81,7 @@ class CartModel(QAbstractListModel):
         Luego de eso inserta las filas correspondientes y los items son agregados.
         """
         for row, item in enumerate(self._items):
-            if item["Id"] == product_id and item["Notes"] == notes:
+            if item["Id"] == product_id and item["notes"] == notes:
                 item["Quantity"] += 1
                 
                 index = self.index(row)
@@ -97,7 +97,7 @@ class CartModel(QAbstractListModel):
             "CategoryId": category_id,
             "CategoryName": category_name,
             "Name": name,
-            "Notes": notes,
+            "notes": notes,
             "Price": price,
             "Quantity": 1,
         })
@@ -128,7 +128,7 @@ class CartModel(QAbstractListModel):
                 "category_id": item["CategoryId"],
                 "category_name": item["CategoryName"],
                 "name": item["Name"],
-                "notes": item["Notes"],
+                "notes": item["notes"],
                 "unit_price": item["Price"],
                 "quantity": item["Quantity"]
             })

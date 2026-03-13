@@ -12,8 +12,6 @@ class OrderItemsModel(QAbstractListModel):
     NameRole = Qt.UserRole + 5
     UnitPriceRole = Qt.UserRole + 6
     QuantityRole = Qt.UserRole + 7
-
-    
     
     def __init__(self):
         super().__init__()

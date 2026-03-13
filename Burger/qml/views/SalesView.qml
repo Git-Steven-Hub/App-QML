@@ -338,7 +338,7 @@ Item {
             }
 
             Text {
-                text: "SECCIÓN                 PRODUCTO                    CANTIDAD         PRECIO"
+                text: "   SECCIÓN              PRODUCTO                  CANTIDAD           PRECIO"
                 color: Theme.textMuted
                 Layout.preferredWidth: 80
                 font.pixelSize: 10
