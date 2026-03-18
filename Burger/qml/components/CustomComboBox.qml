@@ -23,6 +23,11 @@ ComboBox {
             color: "white"
             opacity: root.hovered ? 0.07 : 0
         }
+
+        MouseArea {
+            anchors.fill: parent
+            cursorShape: Qt.PointingHandCursor
+        }
     }
 
     contentItem: Text {
@@ -73,6 +78,8 @@ ComboBox {
             color: Theme.background
             border.width: 1
             border.color: Theme.divider
+
+            
         }
 
         contentItem: ListView {
@@ -96,6 +103,11 @@ ComboBox {
                     color: delegateItem.highlighted ? Theme.primary :
                            delegateItem.hovered ? Qt.rgba(1, 1, 1, 0.12) : "transparent"
                     radius: Theme.radius * 0.6
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                    }
                 }
 
                 contentItem: Text {

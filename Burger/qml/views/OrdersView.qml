@@ -132,9 +132,26 @@ Item {
 
         // Panel Derecho
         CartSummary {
+            id: cartSummary
             Layout.preferredWidth: 300
             Layout.fillHeight: true
             Layout.minimumWidth: 300
+        }
+    }
+    
+    ConfirmDialog {
+        id: confirmDialog
+        titleText: "Datos del pedido"
+        anchors.centerIn: parent
+        modal: true
+        width: Math.min(460, parent.width * 0.75)
+        height: Math.min(580, parent.height * 0.85)
+
+        onConfirmWithData: (data) => {
+            CartModel.confirmOrder(data.name, data.phone, data.method)
+            SalesModel.load_orders()
+
+            cartSummary.resetInputs()
         }
     }
 }

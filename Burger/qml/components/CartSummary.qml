@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
 import "../theme"
 
@@ -7,6 +6,16 @@ Rectangle {
     id: root
     color: Theme.surface
 
+    function resetInputs() {
+        client_name.text = ""
+        client_phone.text = ""
+        payment_method.currentIndex = 0
+        isDelivery = false
+    }
+
+    property bool isDelivery: false
+        property real deliveryFee: 2000
+    
     ColumnLayout {
         Layout.alignment: Qt.AlignHCenter
         anchors.fill: parent
@@ -60,7 +69,41 @@ Rectangle {
             CustomComboBox {
                 id: payment_method
                 Layout.preferredWidth: 200
+                Layout.alignment: Qt.AlignHCenter
                 model: ["Efectivo", "Transferencia", "Tarjeta"]
+            }
+
+            Text {
+                text: "TIPO DE ENTREGA"
+                font.pixelSize: 16
+                color: Theme.divider
+                font.bold: true
+                Layout.alignment: Qt.AlignHCenter
+            }
+
+            RowLayout {
+                spacing: 12
+                Layout.fillWidth: true
+
+                AppButton {
+                    text: "Retira en local"
+                    baseColor: !root.isDelivery ? Theme.primary : Theme.surfaceAlt
+                    Layout.fillWidth: true
+                    
+                    onClicked: {
+                        root.isDelivery = false
+                    }
+                }
+
+                AppButton {
+                    text: "Delivery"
+                    baseColor: root.isDelivery ? Theme.primary : Theme.surfaceAlt
+                    Layout.fillWidth: true
+
+                    onClicked: {
+                        root.isDelivery = true
+                    }
+                }
             }
         }
 
@@ -156,6 +199,45 @@ Rectangle {
                 spacing: 8
                 
                 Text {
+                    text: "Subtotal:"
+                    color: Theme.accent
+                    font.bold: true
+                    Layout.fillWidth: true
+                }
+
+                Text {
+                    text: "$" + CartModel.total.toFixed(2)
+                    color: Theme.success
+                    font.bold: true
+                }
+            }
+            RowLayout {
+                spacing: 8
+            
+                Text {
+                    text: "Delivery:"
+                    color: Theme.success
+                    font.bold: true
+                    Layout.fillWidth: true
+                }
+
+                Text {
+                    text: "+ $" + root.deliveryFee.toFixed(2)
+                    color: Theme.success
+                    font.bold: true
+                }
+            }
+
+            Rectangle {
+                height: 1
+                Layout.fillWidth: true
+                color: Qt.rgba(1, 1, 1, 0.2)
+            }
+
+            RowLayout {
+                spacing: 8
+
+                Text {
                     text: "TOTAL:"
                     color: Theme.accent
                     font.bold: true
@@ -164,10 +246,10 @@ Rectangle {
                 }
                 
                 Text {
-                    text: "$" + CartModel.total.toFixed(2)
+                    text: "$" + (CartModel.total + (root.isDelivery ? root.deliveryFee : 0)).toFixed(2)
                     color: Theme.accent
                     font.bold: true
-                    font.pixelSize: 16
+                    font.pixelSize: 18
                 }
             }
         }
@@ -192,22 +274,20 @@ Rectangle {
                 confirmDialog.clientName = name
                 confirmDialog.clientPhone = phone
                 confirmDialog.paymentMethod = payment_method.currentText
-                confirmDialog.total = CartModel.total
-                confirmDialog.clientData = { name: name, phone: phone, method: payment_method.currentText }
+                confirmDialog.total = CartModel.total + (root.isDelivery ? root.deliveryFee : 0)
+                confirmDialog.isDelivery = root.isDelivery
+                confirmDialog.deliveryFee = root.isDelivery ? root.deliveryFee : 0
+
+                confirmDialog.clientData = { 
+                    name: name, 
+                    phone: phone, 
+                    method: payment_method.currentText,
+                    isDelivery: root.isDelivery,
+                    deliveryFee: root.isDelivery ? root.deliveryFee: 0
+                }
+
                 confirmDialog.open()
             }
-        }
-    }
-
-    ConfirmDialog {
-        id: confirmDialog
-        titleText: "Datos del pedido"
-
-        onConfirmWithData: (data) => {
-            CartModel.confirmOrder(data.name, data.phone, data.method)
-            SalesModel.load_orders()
-            client_name.text = ""
-            client_phone.text = ""
         }
     }
 }

@@ -36,6 +36,7 @@ Item {
             anchors.fill: parent
             anchors.margins: 16
             spacing: 16
+            enabled: !root.detailsOpen
 
             //Resumen arriba
             Text {
@@ -63,6 +64,7 @@ Item {
                             to: 1.1
                             duration: 100 
                         }
+
                         NumberAnimation {
                             target: totalText
                             property: "scale"
@@ -84,16 +86,15 @@ Item {
                     AppButton {
                         Layout.fillWidth: true
                         implicitHeight: 65
+                        opacity: root.detailsOpen ? 0.6 : 1
+
                         text: {
                             if (modelData === "Todos")
                                 return modelData + " (" + SalesModel.totalCount + ")"
-
                             if (modelData === "En curso")
                                 return modelData + " (" + SalesModel.enCursoCount + ")"
-
                             if (modelData === "Completado")
                                 return modelData + " (" + SalesModel.completadoCount + ")"
-
                             if (modelData === "Cancelado")
                                 return modelData + " (" + SalesModel.canceladoCount + ")"
                         }
@@ -118,7 +119,8 @@ Item {
                     model: SalesProxy
                     spacing: 10
                     clip: true
-
+                    opacity: root.detailsOpen ? 0.6 : 1
+                    
                     boundsBehavior: Flickable.StopAtBounds
 
                     add: Transition {
@@ -161,7 +163,7 @@ Item {
                             color: hovered ? Qt.darker(Theme.surfaceAlt, 1.05) : Theme.surfaceAlt
 
                             Behavior on color {
-                                ColorAnimation { 
+                                ColorAnimation {
                                     duration: 120
                                 }
                             }
@@ -213,6 +215,7 @@ Item {
                             hoverEnabled: true
                             onEntered: parent.hovered = true
                             onExited: parent.hovered = false
+                            cursorShape: Qt.PointingHandCursor
 
                             onClicked: {
                                 root.selectedIndex = index
@@ -258,6 +261,7 @@ Item {
 
         MouseArea {
             anchors.fill: parent
+            hoverEnabled: true
             onClicked: {
                 root.detailsOpen = false
                 root.selectedOrder = null

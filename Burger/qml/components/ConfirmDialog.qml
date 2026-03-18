@@ -24,66 +24,103 @@ Dialog {
     property string clientName: ""
     property string clientPhone: ""
     property string paymentMethod: ""
+    property bool isDelivery: false
+        property real deliveryFee: 0
+
     property real total: 0
 
     signal confirm()
     signal cancel()
     signal confirmWithData(var clientData)
 
+    enter: Transition {
+        NumberAnimation {
+            property: "scale"
+            from: 0.8
+            to: 1.0
+            duration: 180
+            easing.type: Easing.OutBack
+        }
+
+        NumberAnimation {
+            property: "opacity"
+            from: 0
+            to: 1
+            duration: 180
+        }
+    }
+
     ColumnLayout {
-        Layout.alignment: Qt.AlignHCenter
-        spacing: 12
+        anchors.fill: parent
+        anchors.margins: 24
+        spacing: 14
 
         Text {
             text: dialog.titleText
-            font.pixelSize: 18
+            font.pixelSize: 35
             font.bold: true
             color: Theme.accent
             Layout.alignment: Qt.AlignHCenter
         }
 
-        Text {
-            text: "Cliente: " + dialog.clientName
-            color: "white"
-            font.pixelSize: 14
-        }
-
-        Text {
-            text: "Teléfono: " + dialog.clientPhone
-            color: "white"
-            font.pixelSize: 14
-        }
-
-        Text {
-            text: "Pago: " + dialog.paymentMethod
-            color: "white"
-            font.pixelSize: 14
-        }
-
-                Rectangle {
-            height: 1
+        GridLayout {
             Layout.fillWidth: true
-            color: Qt.rgba(1, 1, 1, 0.2)
-        }
+            columns: 2
+            columnSpacing: 20
+            rowSpacing: 8
 
-        ListView {
-            Layout.preferredHeight: 150
-            Layout.fillWidth: true
-            model: CartModel
-
-            delegate: Text {
-                text: notes && notes !== "Sin notas" ? Name + " x" + Quantity + " - $" + Price + " (Con nota)" : Name + " x" + Quantity + " - $" + Price
-                color: "white"
-                font.pixelSize: 12
+            Text {
+                text: "Cliente:"
+                color: Theme.textMuted
+                font.pixelSize: 14
             }
-        }
 
-        Text {
-            text: "TOTAL: $" + dialog.total.toFixed(2)
-            font.pixelSize: 18
-            font.bold: true
-            color: Theme.accent
-            Layout.alignment: Qt.AlignHCenter
+            Text {
+                text: dialog.clientName
+                color: "white"
+                font.pixelSize: 14
+                Layout.fillWidth: true
+            }
+
+            Text {
+                text: "Teléfono:"
+                color: Theme.textMuted
+                font.pixelSize: 14
+            }
+
+            Text {
+                text: dialog.clientPhone
+                color: "white"
+                font.pixelSize: 14
+                Layout.fillWidth: true
+            }
+
+            Text {
+                text: "Pago:"
+                color: Theme.textMuted
+                font.pixelSize: 14
+            }
+
+            Text {
+                text: dialog.paymentMethod
+                color: "white"
+                font.pixelSize: 14
+                Layout.fillWidth: true
+            }
+            
+            Text {
+                text: "Entrega:"
+                color: Theme.textMuted
+                font.pixelSize: 14
+            }
+
+            Text {
+                text: dialog.isDelivery ? "Delivery (+ $" + dialog.deliveryFee.toFixed(0) + ")" : "Retira en local"
+                color: dialog.isDelivery ? Theme.success : "white"
+                font.pixelSize: 14
+                font.bold: dialog.isDelivery
+                Layout.fillWidth: true
+            }
         }
 
         Rectangle {
@@ -92,13 +129,70 @@ Dialog {
             color: Qt.rgba(1, 1, 1, 0.2)
         }
 
+        ListView {
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            Layout.minimumHeight: 140
+            Layout.maximumHeight: 220
+            model: CartModel
+            clip: true
+            spacing: 8
+
+            boundsBehavior: Flickable.StopAtBounds
+
+            delegate: Row {
+                width: ListView.view.width
+                spacing: 12
+
+                Text {
+                    text: Name + (notes && notes !== "Sin notas" ? " (nota)" : "")
+                    color: "white"
+                    font.pixelSize: 13
+                    width: parent.width * 0.55
+                    elide: Text.ElideRight
+                }
+                
+                Text {
+                    text: "x" + Quantity
+                    color: Theme.textMuted
+                    width: 60
+                    horizontalAlignment: Text.AlignHCenter
+                }
+                Text {
+                    text: "$" + Price
+                    color: Theme.accent
+                    font.bold: true
+                    width: 80
+                    horizontalAlignment: Text.AlignRight
+                }
+            }
+        }
+
+        Rectangle {
+            Layout.fillWidth: true
+            height: 1
+            color: Qt.rgba(1, 1, 1, 0.25)
+        }
+
+        Text {
+            text: "TOTAL: $" + dialog.total.toFixed(2)
+            font.pixelSize: 20
+            font.bold: true
+            color: Theme.accent
+            Layout.alignment: Qt.AlignHCenter
+        }
+
         RowLayout {
             Layout.alignment: Qt.AlignHCenter
-            spacing: 16
+            spacing: 24
 
             AppButton {
                 text: "Confirmar"
                 baseColor: Theme.accent
+                Layout.preferredWidth: 140
+                Layout.preferredHeight: 48
+                font.pixelSize: 15
+
                 onClicked: {
                     dialog.confirmWithData(dialog.clientData)
                     dialog.close()
@@ -108,6 +202,10 @@ Dialog {
             AppButton {
                 text: "Cancelar"
                 baseColor: Theme.buttonDanger
+                Layout.preferredWidth: 140
+                Layout.preferredHeight: 48
+                font.pixelSize: 15
+
                 onClicked: {
                     dialog.cancel()
                     dialog.close()

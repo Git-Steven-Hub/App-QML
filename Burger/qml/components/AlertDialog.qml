@@ -35,6 +35,16 @@ Dialog {
 
     signal acceptedSignal()
 
+    enter: Transition {
+            NumberAnimation {
+                property: "scale"
+                from: 0.5
+                to: 1.0
+                duration: 180
+                easing.type: Easing.OutBack
+            }
+        }
+
     ColumnLayout {
         Layout.alignment: Qt.AlignHCenter
         spacing: 16

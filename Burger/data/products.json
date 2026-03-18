@@ -8,28 +8,28 @@
     ],
 
     "products": [
-        { "id": 1, "category_id": 1, "category_name" : "Hamburguesas", "name": "Clásica", "price": 280, "image": "🍔" },
-        { "id": 2, "category_id": 1, "category_name" : "Hamburguesas", "name": "Doble", "price": 380, "image": "🍔" },
-        { "id": 3, "category_id": 1, "category_name" : "Hamburguesas", "name": "Especial", "price": 450, "image": "🍔" },
-        { "id": 4, "category_id": 1, "category_name" : "Hamburguesas", "name": "Premium", "price":520, "image": "🍔" },
+        { "id": 1, "category_id": 1, "category_name" : "Hamburguesas", "name": "Clásica", "price": 4000, "image": "🍔" },
+        { "id": 2, "category_id": 1, "category_name" : "Hamburguesas", "name": "Doble", "price": 4500, "image": "🍔" },
+        { "id": 3, "category_id": 1, "category_name" : "Hamburguesas", "name": "Especial", "price": 5000, "image": "🍔" },
+        { "id": 4, "category_id": 1, "category_name" : "Hamburguesas", "name": "Premium", "price":5500, "image": "🍔" },
 
-        { "id": 5, "category_id": 2, "category_name" : "Pizzas", "name": "Común", "price": 320, "image": "🍕" },
-        { "id": 6, "category_id": 2, "category_name" : "Pizzas", "name": "Napolitana", "price": 380, "image": "🍕" },
-        { "id": 7, "category_id": 2, "category_name" : "Pizzas", "name": "Especial", "price": 420, "image": "🍕" },
+        { "id": 5, "category_id": 2, "category_name" : "Pizzas", "name": "Común", "price": 6000, "image": "🍕" },
+        { "id": 6, "category_id": 2, "category_name" : "Pizzas", "name": "Napolitana", "price": 6500, "image": "🍕" },
+        { "id": 7, "category_id": 2, "category_name" : "Pizzas", "name": "Especial", "price": 7000, "image": "🍕" },
 
-        { "id": 8, "category_id": 3, "category_name" : "Lomitos", "name": "Clásico", "price": 220, "image": "👑" },
-        { "id": 9, "category_id": 3, "category_name" : "Lomitos", "name": "Premium", "price": 260, "image": "👑" },
-        { "id": 10, "category_id": 3, "category_name" : "Lomitos", "name": "Completo", "price": 300, "image": "👑" },
+        { "id": 8, "category_id": 3, "category_name" : "Lomitos", "name": "Clásico", "price": 11000, "image": "👑" },
+        { "id": 9, "category_id": 3, "category_name" : "Lomitos", "name": "Premium", "price": 14000, "image": "👑" },
+        { "id": 10, "category_id": 3, "category_name" : "Lomitos", "name": "Completo", "price": 12500, "image": "👑" },
 
-        { "id": 11, "category_id": 4, "category_name" : "Pachatas", "name": "Clásica", "price": 250, "image": "👑" },
-        { "id": 12, "category_id": 4, "category_name" : "Pachatas", "name": "Completa", "price": 300, "image": "👑" },
-        { "id": 13, "category_id": 4, "category_name" : "Pachatas", "name": "Premium", "price": 350, "image": "👑" },
+        { "id": 11, "category_id": 4, "category_name" : "Pachatas", "name": "Clásica", "price": 9000, "image": "👑" },
+        { "id": 12, "category_id": 4, "category_name" : "Pachatas", "name": "Completa", "price": 9500, "image": "👑" },
+        { "id": 13, "category_id": 4, "category_name" : "Pachatas", "name": "Premium", "price": 10500, "image": "👑" },
 
-        { "id": 14, "category_id": 5, "category_name" : "Fritas", "name": "Clásicas", "price": 250, "image": "🍟" },
-        { "id": 15, "category_id": 5, "category_name" : "Fritas", "name": "Cheddar", "price": 450, "image": "🍟" },
+        { "id": 14, "category_id": 5, "category_name" : "Fritas", "name": "Clásicas", "price": 6000, "image": "🍟" },
+        { "id": 15, "category_id": 5, "category_name" : "Fritas", "name": "Cheddar", "price": 7500, "image": "🍟" },
 
-        { "id": 16, "category_id": 6, "category_name" : "Bebidas", "name": "Coca Cola", "price": 50, "image": "🥛" },
-        { "id": 17, "category_id": 6, "category_name" : "Bebidas", "name": "Fanta", "price": 50, "image": "🥛" },
-        { "id": 18, "category_id": 6, "category_name" : "Bebidas", "name": "Sprite", "price": 50, "image": "🥛" }
+        { "id": 16, "category_id": 6, "category_name" : "Bebidas", "name": "Coca Cola 1,25Lts", "price": 3000, "image": "🥛" },
+        { "id": 17, "category_id": 6, "category_name" : "Bebidas", "name": "Fanta 1,25Lts", "price": 3000, "image": "🥛" },
+        { "id": 18, "category_id": 6, "category_name" : "Bebidas", "name": "Sprite 1,25Lts", "price": 3000, "image": "🥛" }
     ]
 }
