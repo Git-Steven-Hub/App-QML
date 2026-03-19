@@ -8,8 +8,11 @@ class SalesModel(QAbstractListModel):
     #Roles para tomarlos en QML
     OrderIdRole = Qt.UserRole + 1
     TimeRole = Qt.UserRole + 2
-    TotalRole = Qt.UserRole + 3
-    StatusRole = Qt.UserRole + 4
+    ClientNameRole = Qt.UserRole + 3
+    ClientPhoneRole = Qt.UserRole + 4
+    PaymentMethodRole = Qt.UserRole + 5
+    TotalRole = Qt.UserRole + 6
+    StatusRole = Qt.UserRole + 7
 
     def __init__(self):
         super().__init__()
@@ -35,8 +38,11 @@ class SalesModel(QAbstractListModel):
             order = {
                 "orderId": row[0],
                 "Time": row[1],
-                "Total": row[2],
-                "Status": row[3]
+                "ClientName": row[2],
+                "ClientPhone": row[3],
+                "PaymentMethod": row[4],
+                "Total": row[5],
+                "Status": row[6]
             }
             self.orders.append(order)
             
@@ -59,6 +65,15 @@ class SalesModel(QAbstractListModel):
         if role == self.TimeRole:
             return order["Time"]
         
+        if role == self.ClientNameRole:
+            return order["ClientName"]
+        
+        if role == self.ClientPhoneRole:
+            return order["ClientPhone"]
+        
+        if role == self.PaymentMethodRole:
+            return order["PaymentMethod"]
+        
         if role == self.TotalRole:
             return order["Total"]
         
@@ -74,6 +89,9 @@ class SalesModel(QAbstractListModel):
         return {
             self.OrderIdRole: QByteArray(b"orderId"),
             self.TimeRole: QByteArray(b"Time"),
+            self.ClientNameRole: QByteArray(b"ClientName"),
+            self.ClientPhoneRole: QByteArray(b"ClientPhone"),
+            self.PaymentMethodRole: QByteArray(b"PaymentMethod"),
             self.TotalRole: QByteArray(b"Total"),
             self.StatusRole: QByteArray(b"Status"),
         }

@@ -222,6 +222,9 @@ Item {
                                 root.selectedOrder = {
                                     orderId: orderId,
                                     time: Time,
+                                    clientName: ClientName || "Sin nombre",
+                                    clientPhone: ClientPhone || "Sin teléfono",
+                                    clientPayment: PaymentMethod,
                                     total: Total,
                                     status: Status
                                 }
@@ -334,11 +337,103 @@ Item {
             }
 
             Text {
-                text: root.selectedOrder ? "Total del pedido $" + root.selectedOrder.total : ""
+                text: "Datos del cliente"
                 Layout.alignment: Qt.AlignHCenter
-                font.pixelSize: 18
+                font.pixelSize: 20
                 font.bold: true
-                color: Theme.accent
+                color: "white"
+                visible: root.selectedOrder !== null
+            }
+
+            RowLayout {
+                Layout.fillWidth: true
+                visible: root.selectedOrder !== null
+                spacing: 80
+
+                ColumnLayout {
+                    Layout.fillWidth: true
+                    spacing: 8
+
+                    RowLayout {
+
+                        Text {
+                            text: "Cliente:"
+                            font.pixelSize: 12
+                            color: "white"
+                            Layout.column: 0
+                        }
+
+                        Text {
+                            text: root.selectedOrder ? root.selectedOrder.clientName || "Sin datos" : ""
+                            font.pixelSize: 12
+                            color: "white"
+                            Layout.column: 1
+                            Layout.fillWidth: true
+                        }
+                    }
+
+                    RowLayout {
+
+                        Text {
+                            text: "Teléfono:"
+                            font.pixelSize: 12
+                            color: "white"
+                            Layout.column: 0
+                        }
+
+                        Text {
+                            text: root.selectedOrder ? root.selectedOrder.clientPhone || "Sin datos" : ""
+                            font.pixelSize: 12
+                            color: "white"
+                            Layout.column: 1
+                            Layout.fillWidth: true
+                        }
+                    }
+                }
+
+                ColumnLayout {
+                    Layout.fillWidth: true
+                    spacing: 8
+
+                    RowLayout {
+
+                        Text {
+                            text: "Forma de pago:"
+                            font.pixelSize: 12
+                            color: "white"
+                            Layout.column: 2
+                        }
+
+                        Text {
+                            text: root.selectedOrder ? root.selectedOrder.clientPayment : ""
+                            font.pixelSize: 12
+                            color: "white"
+                            Layout.column: 3
+                            Layout.fillWidth: true
+                        }
+                    }
+
+                    RowLayout {
+
+                        Text {
+                            text: "Entrega:"
+                            font.pixelSize: 12
+                            color: "white"
+                        }
+
+                        Text {
+                            text: "Retira en local"
+                            font.pixelSize: 12
+                            color: "white"
+                        }
+                    }
+                }
+            }
+
+            Rectangle {
+                Layout.fillWidth: true
+                height: 1
+                color: Theme.surfaceAlt
             }
 
             Text {
@@ -370,19 +465,21 @@ Item {
 
                     RowLayout {
                         anchors.fill: parent
-                        anchors.margins: 8
+                        anchors.margins: 6
 
                         Text {
                             text: model.categoryName
                             color: Theme.textMuted
                             font.pixelSize: 10
+                            font.bold: true
                             Layout.preferredWidth: 80
                         }
-                        
+
                         Text {
                             text: model.Name
-                            color: "white"
+                            color: Theme.textMuted
                             font.bold: true
+                            font.pixelSize: 14
                             Layout.fillWidth: true
                         }
 
@@ -398,6 +495,20 @@ Item {
                         }
                     }
                 }
+            }
+
+            Rectangle {
+                Layout.fillWidth: true
+                height: 1
+                color: Theme.surfaceAlt
+            }
+
+            Text {
+                text: root.selectedOrder ? "Total del pedido $" + root.selectedOrder.total : ""
+                Layout.alignment: Qt.AlignHCenter
+                font.pixelSize: 18
+                font.bold: true
+                color: Theme.accent
             }
 
             Item { Layout.fillHeight: true }

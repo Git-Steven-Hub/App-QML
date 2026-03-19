@@ -10,8 +10,9 @@ class OrderItemsModel(QAbstractListModel):
     CategoryIdRole = Qt.UserRole + 3
     CategoryNameRole = Qt.UserRole + 4
     NameRole = Qt.UserRole + 5
-    UnitPriceRole = Qt.UserRole + 6
-    QuantityRole = Qt.UserRole + 7
+    NotesRole = Qt.UserRole + 6
+    UnitPriceRole = Qt.UserRole + 7
+    QuantityRole = Qt.UserRole + 8
     
     def __init__(self):
         super().__init__()
@@ -34,8 +35,9 @@ class OrderItemsModel(QAbstractListModel):
                 "category_id": row[3],
                 "category_name": row[4],
                 "Name": row[5],
-                "UnitPrice": row[6],
-                "Quantity": row[7]
+                "Notes": row[6],
+                "UnitPrice": row[7],
+                "Quantity": row[8]
             }
             self.items.append(item)
             
@@ -67,6 +69,9 @@ class OrderItemsModel(QAbstractListModel):
         if role == self.NameRole:
             return item["Name"]
         
+        if role == self.NotesRole:
+            return item["Notes"]
+        
         if role == self.UnitPriceRole:
             return item["UnitPrice"]
         
@@ -80,6 +85,7 @@ class OrderItemsModel(QAbstractListModel):
             self.CategoryIdRole: QByteArray(b"categoryId"),
             self.CategoryNameRole: QByteArray(b"categoryName"),
             self.NameRole: QByteArray(b"Name"),
+            self.NotesRole: QByteArray(b"Notes"),
             self.UnitPriceRole: QByteArray(b"UnitPrice"),
             self.QuantityRole: QByteArray(b"Quantity"),
         }

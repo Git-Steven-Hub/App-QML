@@ -195,14 +195,14 @@ class DataBase:
         
     def get_orders(self):
         self.cursor.execute('''
-                SELECT id, datetime, total, status FROM orders ORDER BY id DESC
+                SELECT id, datetime, client_name, client_phone, payment_method, total, status FROM orders ORDER BY id DESC
             ''')
         
         return self.cursor.fetchall()
     
     def get_orders_items(self, order_id):
         self.cursor.execute('''
-                SELECT id, item_id, item_type, category_id, category_name, name, unit_price, quantity FROM orders_items WHERE order_id = ?''',
+                SELECT id, item_id, item_type, category_id, category_name, name, notes, unit_price, quantity FROM orders_items WHERE order_id = ?''',
                 (order_id,))
         
         return self.cursor.fetchall()

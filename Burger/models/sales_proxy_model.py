@@ -32,8 +32,8 @@ class SalesFilterProxyModel(QSortFilterProxyModel):
         
         for row in range(self.rowCount()):
             idx = self.index(row, 0)
-            status = self.data(idx, Qt.UserRole + 4)
-            amount = self.data(idx, Qt.UserRole + 3)
+            status = self.data(idx, Qt.UserRole + 7)
+            amount = self.data(idx, Qt.UserRole + 6)
             
             if status != "Cancelado":
                 total += amount
@@ -47,6 +47,6 @@ class SalesFilterProxyModel(QSortFilterProxyModel):
             return True
         
         index = self.sourceModel().index(source_row, 0, source_parent)
-        status = self.sourceModel().data(index, Qt.UserRole + 4)
+        status = self.sourceModel().data(index, Qt.UserRole + 6)
         
         return status == self.status_filter
