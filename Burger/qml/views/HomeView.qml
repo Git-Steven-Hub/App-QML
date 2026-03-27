@@ -70,7 +70,12 @@ Item {
                     color: Qt.rgba(1, 1, 1, 0.2)
                 }
                 
-                Repeater {
+                ListView {
+                    topMargin: 8
+                    bottomMargin: 8
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+
                     model: [
                         { view: "OrdersView", label: "Pedidos", icon: "🔨" },
                         { view: "PromosView", label: "Promos", icon: "🔨" },
@@ -80,12 +85,45 @@ Item {
                         { view: "Perfil", label: "Perfil", icon: "🔨" }
                     ]
 
-                    AppButton {
-                        text: modelData.icon + " " + modelData.label
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 100
-                        baseColor: root.currentView === modelData.view ? Theme.primary : Theme.surfaceAlt
-                        
+                    property int itemHeight: 100
+                    property int itemCount: model.length
+
+                    spacing: {
+                        let totalItemsHeight = itemCount * itemHeight
+                        let available = height - totalItemsHeight
+
+                        if (available <= 0) return 12
+
+                        return Math.min(12 + available / 6, 48)
+                    }
+
+                    Behavior on spacing {
+                        NumberAnimation {
+                            duration: 150
+                            easing.type : Easing.OutQuad
+                        }
+                    }
+
+                    boundsBehavior: Flickable.StopAtBounds
+                    clip: true
+                    flickableDirection: Flickable.VerticalFlick
+                    
+                    maximumFlickVelocity: 0
+
+                    delegate: SideBarButtons {
+                        active: root.currentView === modelData.view
+                        width: ListView.view.width
+                        height: {
+                            let view = ListView.view
+                            let totalSpacing = (view.itemCount - 1) * view.spacing
+                            let available = view.height - view.topMargin - view.bottomMargin - totalSpacing - 1
+
+                            return Math.max(80, Math.min(100, Math.floor(available / ListView.view.itemCount)))
+                        }
+
+                        text: modelData.label
+                        iconText: modelData.icon
+
                         onClicked: {
                             root.currentView = modelData.view
                         }

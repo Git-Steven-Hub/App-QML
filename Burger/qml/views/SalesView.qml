@@ -91,12 +91,15 @@ Item {
                         text: {
                             if (modelData === "Todos")
                                 return modelData + " (" + SalesModel.totalCount + ")"
+
                             if (modelData === "En curso")
                                 return modelData + " (" + SalesModel.enCursoCount + ")"
+
                             if (modelData === "Completado")
                                 return modelData + " (" + SalesModel.completadoCount + ")"
+
                             if (modelData === "Cancelado")
-                                return modelData + " (" + SalesModel.canceladoCount + ")"
+                                return modelData + " (" + SalesModel.canceladoCount + ")"   
                         }
                         baseColor: root.currentFilter === modelData ? Theme.primary : Theme.surfaceAlt
 
