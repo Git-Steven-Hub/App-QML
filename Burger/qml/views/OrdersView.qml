@@ -46,9 +46,7 @@ Item {
                                 Layout.fillWidth: true
                                 Layout.preferredHeight: 60
                                 font.pixelSize: 15
-                                baseColor: root.currentCategory === model.categoryId
-                                    ? Theme.primary 
-                                    : Theme.buttonSecondary
+                                baseColor: root.currentCategory === model.categoryId ? Theme.primary : Theme.buttonSecondary
                                 
                                 onClicked: {
                                     root.currentCategory = model.categoryId

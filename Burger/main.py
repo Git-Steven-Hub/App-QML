@@ -1,5 +1,6 @@
 import os
 import sys
+from qml import resources_rc
 from PySide6.QtWidgets import QApplication
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtCore import QUrl
@@ -9,6 +10,7 @@ from models.cart_model import CartModel
 from models.order_items_model import OrderItemsModel
 from models.products_model import ProductsModel
 from models.categories_model import CategoriesModel
+from models.auth_model import AuthModel
 from database.database_manager import DataBase
 from pathlib import Path
 
@@ -25,6 +27,10 @@ def main():
 	engine = QQmlApplicationEngine()
 
 	db = DataBase()
+	authmodel = AuthModel()
+
+	authmodel.create_admin()
+ 
 	products_model = ProductsModel()
 	categories_model = CategoriesModel()
 	cart_model = CartModel()
@@ -34,6 +40,7 @@ def main():
 
 	proxy_model.setSourceModel(sales_model)
 
+	engine.rootContext().setContextProperty("AuthModel", authmodel)
 	engine.rootContext().setContextProperty("ProductsModel", products_model)
 	engine.rootContext().setContextProperty("CategoriesModel", categories_model)
 	engine.rootContext().setContextProperty("CartModel", cart_model)
@@ -45,13 +52,22 @@ def main():
 
 	engine.load(QUrl.fromLocalFile(str(main_qml)))
 
-	if not engine.rootObjects():
-		sys.exit(-1)
+	def cleanup():
+		"""
+  		Función que se encarga de limpiar los modelos
+  		y cerrar la conexión a la base de datos.
+       """
+		engine.rootContext().setContextProperty("AuthModel", None)
+		engine.rootContext().setContextProperty("ProductsModel", None)
+		engine.rootContext().setContextProperty("CategoriesModel", None)
+		engine.rootContext().setContextProperty("CartModel", None)
+		engine.rootContext().setContextProperty("SalesModel", None)
+		engine.rootContext().setContextProperty("OrderItemsModel", None)
+		engine.rootContext().setContextProperty("SalesProxy", None)
+		db.close_system()
 
-	app.aboutToQuit.connect(db.close_system)
+	app.aboutToQuit.connect(cleanup)
 	sys.exit(app.exec())
-
-	
 
 if __name__ == "__main__":
 	main()

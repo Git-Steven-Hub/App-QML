@@ -6,7 +6,7 @@ Button {
     id: root
 
     property bool active: false
-    property string iconText: ""
+    property string iconSource: ""
 
     hoverEnabled: true
     font.pixelSize: 13
@@ -28,9 +28,9 @@ Button {
         radius: 10
 
         color: root.active
-            ? Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, 0.15)
+            ? Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, 0.18)
             : root.hovered
-                ? Qt.lighter(Theme.surfaceAlt, 1.15)
+                ? Qt.lighter(Theme.surfaceAlt, 1.12)
                 : Theme.surfaceAlt
 
         border.color: root.active 
@@ -51,11 +51,16 @@ Button {
                 duration: 120
             }
         }
+        Behavior on radius {
+            NumberAnimation {
+                duration: 120
+            }
+        }
     }
 
     Rectangle {
         visible: root.active
-        width: 3
+        width: 4
         radius: 2
         color: Theme.primary
 
@@ -65,7 +70,16 @@ Button {
             verticalCenter: parent.verticalCenter
         }
 
-        height: parent.height * 0.5
+        height: parent.height * 0.6
+    }
+    Rectangle {
+        anchors.bottom: parent.bottom
+        height: 40
+        width: parent.width
+        gradient: Gradient {
+            GradientStop { position: 0; color: "transparent" }
+            GradientStop { position: 1; color: Theme.surface }
+        }
     }
 
     contentItem: Row {
@@ -73,18 +87,22 @@ Button {
         anchors.fill: parent
         anchors.leftMargin: 16
         anchors.rightMargin: 10
+        anchors.verticalCenter: parent.verticalCenter
 
-        Text {
-            text: root.iconText
-            font.pixelSize: 14
-            opacity: root.active ? 1 : 0.75
+        Image {
+            source: root.iconSource
+            width: 18
+            height: 18
+            fillMode: Image.PreserveAspectFit
+            anchors.verticalCenter: parent.verticalCenter
+            opacity: root.active ? 1 : 0.7
         }
 
         Text {
             text: root.text
             font: root.font
             color: root.active ? "white" : "#DDDDDD"
-            verticalAlignment: Text.AlignVCenter
+            anchors.verticalCenter: parent.verticalCenter
             elide: Text.ElideRight
         }
     }

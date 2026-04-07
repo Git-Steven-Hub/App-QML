@@ -41,6 +41,7 @@ Item {
     }
 
     SplitView {
+        
         anchors.fill: parent
         orientation: Qt.Horizontal
 
@@ -77,25 +78,15 @@ Item {
                     Layout.fillHeight: true
 
                     model: [
-                        { view: "OrdersView", label: "Pedidos", icon: "🔨" },
-                        { view: "PromosView", label: "Promos", icon: "🔨" },
-                        { view: "SalesView", label: "Pedidos en curso", icon: "🔨" },
-                        { view: "Menú", label: "Menú", icon: "🔨" },
-                        { view: "Estadísticas", label: "Estadísticas", icon: "🔨" },
-                        { view: "Perfil", label: "Perfil", icon: "🔨" }
+                        { view: "OrdersView", label: "Pedidos", icon: "qrc:/icons/shopping-cart.png" },
+                        { view: "PromosView", label: "Promos", icon: "qrc:/icons/tag.png" },
+                        { view: "SalesView", label: "Pedidos en curso", icon: "qrc:/icons/clock.png" },
+                        { view: "Menú", label: "Menú", icon: "qrc:/icons/shopping-cart.png" },
+                        { view: "Estadísticas", label: "Estadísticas", icon: "qrc:/icons/chart-bar.png" },
+                        { view: "Perfil", label: "Perfil", icon: "qrc:/icons/user.png" }
                     ]
 
-                    property int itemHeight: 100
-                    property int itemCount: model.length
-
-                    spacing: {
-                        let totalItemsHeight = itemCount * itemHeight
-                        let available = height - totalItemsHeight
-
-                        if (available <= 0) return 12
-
-                        return Math.min(12 + available / 6, 48)
-                    }
+                    spacing: 10
 
                     Behavior on spacing {
                         NumberAnimation {
@@ -113,16 +104,10 @@ Item {
                     delegate: SideBarButtons {
                         active: root.currentView === modelData.view
                         width: ListView.view.width
-                        height: {
-                            let view = ListView.view
-                            let totalSpacing = (view.itemCount - 1) * view.spacing
-                            let available = view.height - view.topMargin - view.bottomMargin - totalSpacing - 1
-
-                            return Math.max(80, Math.min(100, Math.floor(available / ListView.view.itemCount)))
-                        }
+                        implicitHeight: 48
 
                         text: modelData.label
-                        iconText: modelData.icon
+                        iconSource: modelData.icon
 
                         onClicked: {
                             root.currentView = modelData.view

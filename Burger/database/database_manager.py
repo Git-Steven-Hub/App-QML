@@ -64,9 +64,19 @@ class DataBase:
                     INSERT INTO products (id, category_id, category_name, name, price, image) VALUES (?, ?, ?, ?, ?, ?)''',
                     (product["id"], product["category_id"], product["category_name"], product["name"], product["price"], product["image"])
                 )
+            
         self.connection.commit()
         
     def create_tables(self):
+        self.cursor.execute('''
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT UNIQUE NOT NULL,
+                password_hash TEXT NOT NULL,
+                role TEXT DEFAULT 'vendedor'
+                )
+            ''')
+        
         self.cursor.execute('''
             CREATE TABLE IF NOT EXISTS categories (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -148,11 +158,15 @@ class DataBase:
         self.connection.commit()
     
     def get_categories(self):
-        self.cursor.execute('''
-                SELECT * FROM categories
+        try:
+            self.cursor.execute('''
+                SELECT id, name, icon FROM categories ORDER BY id
             ''')
+            return self.cursor.fetchall()
         
-        return self.cursor.fetchall()
+        except sqlite3.Error as e:
+            print(f"Erro al obtener categorías: {e}")
+            return []
     
     def get_products(self):
         self.cursor.execute('''

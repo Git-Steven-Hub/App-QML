@@ -1,0 +1,85 @@
+import hashlib
+import secrets
+from database.database_manager import DataBase
+from PySide6.QtCore import QObject, Signal, Property, Slot
+
+class AuthModel(QObject):
+    
+    loginSuccess = Signal()
+    loginFailed = Signal(str)
+    
+    def __init__(self):
+        super().__init__()
+        self.db = DataBase()
+        self.curret_user = None
+        
+    def create_admin(self):
+        user = "admin"
+        password = "admin123"
+        
+        password_hash = self.hash_password(password)
+        
+        self.db.cursor.execute('''
+            INSERT OR IGNORE INTO users (username, password_hash, role) VALUES (?, ?, ?)''',
+            (user, password_hash, "administrador"))
+        
+        self.db.connection.commit()
+        
+    def hash_password(self, password, salt=None):
+        
+        if salt is None:
+            salt = secrets.token_hex(16)
+        
+        hash_obj = hashlib.pbkdf2_hmac("sha256", password.encode(), salt.encode(), 600000)
+        
+        return salt + "$" + hash_obj.hex()
+    
+    def verify_password(self, password, stored_hash):
+        try:
+            salt, stored = stored_hash.split("$")
+            hash_obj = hashlib.pbkdf2_hmac("sha256", password.encode(), salt.encode(), 600000)
+            
+            return hash_obj.hex() == stored
+        
+        except:
+            return False
+        
+    @Slot(str, str)
+    def login(self, username, password):
+        try:
+            self.db.cursor.execute('''
+                SELECT id, username, role, password_hash FROM users WHERE username = ?''',
+                (username,))
+            
+            user = self.db.cursor.fetchone()
+            
+            if user and self.verify_password(password, user[3]):
+                self.curret_user = {
+                    "id": user[0],
+                    "username": user[1],
+                    "role": user[2]
+                }
+                self.loginSuccess.emit()
+            
+            else:
+                self.loginFailed.emit("Usuario o contraseña incorrectos")
+                
+        except Exception as e:
+            self.loginFailed.emit(f"Error: {str(e)}")
+            
+    @Slot()
+    def logout(self):
+        self.curret_user = None
+        
+    def get_current_user(self):
+        return self.curret_user
+    
+    def is_authenticated(self):
+        return self.curret_user is not None
+    
+    def is_admin(self):
+        return self.curret_user and self.curret_user.get("role") == "administrador"
+    
+    currentUser = Property(QObject, get_current_user)
+    isLoggedIn = Property(bool, is_authenticated)
+    isAdmin = Property(bool, is_admin)

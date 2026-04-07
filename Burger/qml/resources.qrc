@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/shopping-cart.png</file>
+        <file>icons/clock.png</file>
+        <file>icons/user.png</file>
+        <file>icons/tag.png</file>
+        <file>icons/chart-bar.png</file>
+    </qresource>
+</RCC>
+
+<!-- pyside6-rcc resources.qrc -o resources_rc.py para actualizar los iconos -->

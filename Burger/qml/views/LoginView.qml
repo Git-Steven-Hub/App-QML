@@ -56,16 +56,26 @@ Item {
                     }
 
                     AppInput {
+                        id: usernameInput
                         placeholderText: "Usuario"
                         inputWidth: 250
                         Layout.alignment: Qt.AlignCenter
                     }
 
                     AppInput {
+                        id: passwordInput
                         placeholderText: "Contraseña"
                         inputWidth: 250
                         echoMode: TextInput.Password
                         Layout.alignment: Qt.AlignCenter
+                    }
+
+                    Text {
+                        id: errorText
+                        text: ""
+                        color: Theme.buttonDanger
+                        font.pixelSize: 12
+                        visible: text !== ""
                     }
 
                     AppButton {
@@ -77,9 +87,19 @@ Item {
                         implicitWidth: 250
                         
                         onClicked: {
-                            if (window.stackView) {
-                            window.stackView.replace(Qt.resolvedUrl("HomeView.qml"))
-                            }
+                            errorText.text = ""
+
+                            if (usernameInput.text.trim() === "") {
+                                errorText.text = "Ingrese el usuario"
+                                return
+                                }
+
+                            if (passwordInput.text.trim() === "") {
+                                errorText.text = "Ingrese la contraseña"
+                                return
+                                }
+
+                            AuthModel.login(usernameInput.text, passwordInput.text)
                         }
                     }
 
@@ -108,6 +128,20 @@ Item {
                             }
                         }
                     }
+                }
+            }
+
+            Connections {
+                target: AuthModel
+
+                function  onLoginSuccess() {
+                    if (window.stackView) {
+                        window.stackView.replace(Qt.resolvedUrl("HomeView.qml"))
+                    }
+                }
+
+                function onLoginFailed(message) {
+                    errorText.text = message
                 }
             }
         }

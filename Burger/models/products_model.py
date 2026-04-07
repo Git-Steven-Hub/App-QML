@@ -28,13 +28,14 @@ class ProductsModel(QAbstractListModel):
         
         for row in rows:
             product = {
-                "id" : row[0],
-                "category_id" : row[1],
-                "category_name" : row[2],
-                "name" : row[3],
-                "price" : row[4],
-                "icon" : row[5]
+                "id" : int(row[0]),
+                "category_id" : int(row[1]),
+                "category_name" : str(row[2]),
+                "name" : str(row[3]),
+                "price" : float(row[4]),
+                "icon" : str(row[5]) if row[5] else ""
             }
+            
             self.products.append(product)
         
         self.endResetModel()

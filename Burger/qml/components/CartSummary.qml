@@ -211,6 +211,7 @@ Rectangle {
                     font.bold: true
                 }
             }
+            
             RowLayout {
                 spacing: 8
             

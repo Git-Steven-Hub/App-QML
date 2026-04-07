@@ -1,5 +1,6 @@
 from database.database_manager import DataBase
 from PySide6.QtCore import Qt, QAbstractListModel, QModelIndex, Property, Signal, QByteArray, Slot
+from typing import Union
 
 class CartModel(QAbstractListModel):
 
@@ -73,13 +74,17 @@ class CartModel(QAbstractListModel):
     total = Property(float, getTotal, notify=totalChanged)
     
     @Slot(str, int, str, str, str, float)
-    def addProduct(self, product_id, category_id, category_name, name, notes, price):
+    def addProduct(self, product_id: Union[str, int], category_id: int, category_name: str, name: str, notes: str, price: float):
         """
         Función que se encarga de añadir los productos. 
         Itera con un for en _items[], si encuentra que el Id y las notas son el mismo que de algún producto,
         lo suma a la cantidad y emite una señal para que cambie en vivo en QML.
         Luego de eso inserta las filas correspondientes y los items son agregados.
         """
+        product_id = int(product_id)
+        category_id = int(category_id)
+        price = float(price)
+        
         for row, item in enumerate(self._items):
             if item["Id"] == product_id and item["notes"] == notes:
                 item["Quantity"] += 1

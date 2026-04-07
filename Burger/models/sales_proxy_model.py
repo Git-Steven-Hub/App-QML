@@ -1,4 +1,4 @@
-from PySide6.QtCore import Qt, QSortFilterProxyModel, Slot, Property, Signal
+from PySide6.QtCore import QSortFilterProxyModel, Slot, Property, Signal
 
 class SalesFilterProxyModel(QSortFilterProxyModel):
     
@@ -6,13 +6,35 @@ class SalesFilterProxyModel(QSortFilterProxyModel):
     
     def __init__(self):
         super().__init__()
+        
         self.status_filter = "Todos"
+        self.cached_total = 0
+        self.cache_valid = False
         
-        self.dataChanged.connect(self.totalChanged)
-        self.rowsInserted.connect(self.totalChanged)
-        self.rowsRemoved.connect(self.totalChanged)
-        self.modelReset.connect(self.totalChanged)
         
+        self.dataChanged.connect(self.invalidate_cache)
+        self.rowsInserted.connect(self.invalidate_cache)
+        self.rowsRemoved.connect(self.invalidate_cache)
+        self.modelReset.connect(self.invalidate_cache)
+        
+    def invalidate_cache(self):
+        self.cache_valid = False
+        self.totalChanged.emit()
+        
+    def recalculate_total(self):
+        total = 0
+        
+        for row in range(self.rowCount()):
+            idx = self.index(row, 0)
+            status = self.data(idx, self.sourceModel().StatusRole)
+            amount = self.data(idx, self.sourceModel().TotalRole)
+            
+            if status != "Cancelado":
+                total += amount
+        
+        self.cached_total = total
+        self.cache_valid = True
+                
     @Slot(str)
     def setStatusFilter(self, status):
         """
@@ -28,17 +50,10 @@ class SalesFilterProxyModel(QSortFilterProxyModel):
         Itera con un for entre las filas y mientras que sean diferentes al estado "Cancelado",
         se suman para dar el total del día.
         """
-        total = 0
-        
-        for row in range(self.rowCount()):
-            idx = self.index(row, 0)
-            status = self.data(idx, self.sourceModel().StatusRole)
-            amount = self.data(idx, self.sourceModel().TotalRole)
+        if not self.cache_valid:
+            self.recalculate_total()
             
-            if status != "Cancelado":
-                total += amount
-            
-        return total
+        return self.cached_total
         
     totalFiltered = Property(int, getTotalFiltered, notify=totalChanged)
         
