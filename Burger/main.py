@@ -10,6 +10,7 @@ from models.cart_model import CartModel
 from models.order_items_model import OrderItemsModel
 from models.products_model import ProductsModel
 from models.categories_model import CategoriesModel
+from models.promos_model import PromosModel
 from models.auth_model import AuthModel
 from database.database_manager import DataBase
 from pathlib import Path
@@ -32,6 +33,7 @@ def main():
 	authmodel.create_admin()
  
 	products_model = ProductsModel()
+	promos_model = PromosModel()
 	categories_model = CategoriesModel()
 	cart_model = CartModel()
 	sales_model = SalesModel()
@@ -42,6 +44,7 @@ def main():
 
 	engine.rootContext().setContextProperty("AuthModel", authmodel)
 	engine.rootContext().setContextProperty("ProductsModel", products_model)
+	engine.rootContext().setContextProperty("PromosModel", promos_model)
 	engine.rootContext().setContextProperty("CategoriesModel", categories_model)
 	engine.rootContext().setContextProperty("CartModel", cart_model)
 	engine.rootContext().setContextProperty("SalesModel", sales_model)
@@ -59,6 +62,7 @@ def main():
        """
 		engine.rootContext().setContextProperty("AuthModel", None)
 		engine.rootContext().setContextProperty("ProductsModel", None)
+		engine.rootContext().setContextProperty("PromosModel", None)
 		engine.rootContext().setContextProperty("CategoriesModel", None)
 		engine.rootContext().setContextProperty("CartModel", None)
 		engine.rootContext().setContextProperty("SalesModel", None)

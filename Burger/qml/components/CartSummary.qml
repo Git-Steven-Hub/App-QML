@@ -15,6 +15,8 @@ Rectangle {
 
     property bool isDelivery: false
         property real deliveryFee: 2000
+
+    signal confirmOrder(var data)
     
     ColumnLayout {
         Layout.alignment: Qt.AlignHCenter
@@ -272,22 +274,15 @@ Rectangle {
                 let name = client_name.text.trim() !== "" ? client_name.text : "Sin datos"
                 let phone = client_phone.text.trim() !== "" ? client_phone.text : "Sin datos"
 
-                confirmDialog.clientName = name
-                confirmDialog.clientPhone = phone
-                confirmDialog.paymentMethod = payment_method.currentText
-                confirmDialog.total = CartModel.total + (root.isDelivery ? root.deliveryFee : 0)
-                confirmDialog.isDelivery = root.isDelivery
-                confirmDialog.deliveryFee = root.isDelivery ? root.deliveryFee : 0
-
-                confirmDialog.clientData = { 
-                    name: name, 
-                    phone: phone, 
+                let data = {
+                    name: name,
+                    phone: phone,
                     method: payment_method.currentText,
                     isDelivery: root.isDelivery,
-                    deliveryFee: root.isDelivery ? root.deliveryFee: 0
+                    deliveryFee: root.isDelivery ? root.deliveryFee : 0
                 }
 
-                confirmDialog.open()
+                root.confirmOrder(data)
             }
         }
     }

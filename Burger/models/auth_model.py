@@ -1,5 +1,6 @@
 import hashlib
 import secrets
+import logging
 from database.database_manager import DataBase
 from PySide6.QtCore import QObject, Signal, Property, Slot
 
@@ -7,6 +8,7 @@ class AuthModel(QObject):
     
     loginSuccess = Signal()
     loginFailed = Signal(str)
+    logger = logging.getLogger("AuthModel")
     
     def __init__(self):
         super().__init__()
@@ -14,16 +16,20 @@ class AuthModel(QObject):
         self.curret_user = None
         
     def create_admin(self):
-        user = "admin"
-        password = "admin123"
+        try:
+            user = "admin"
+            password = "admin123"
+            
+            password_hash = self.hash_password(password)
+            
+            self.db.cursor.execute('''
+                INSERT OR IGNORE INTO users (username, password_hash, role) VALUES (?, ?, ?)''',
+                (user, password_hash, "administrador"))
+            
+            self.db.connection.commit()
         
-        password_hash = self.hash_password(password)
-        
-        self.db.cursor.execute('''
-            INSERT OR IGNORE INTO users (username, password_hash, role) VALUES (?, ?, ?)''',
-            (user, password_hash, "administrador"))
-        
-        self.db.connection.commit()
+        except Exception as e:
+            self.logger.error(f"Error al crear el admin(create_admin): {e}")
         
     def hash_password(self, password, salt=None):
         
@@ -41,7 +47,8 @@ class AuthModel(QObject):
             
             return hash_obj.hex() == stored
         
-        except:
+        except Exception as e:
+            self.logger.error(f"Error al verificar contraseña(verify_password): {e}")
             return False
         
     @Slot(str, str)
@@ -65,7 +72,7 @@ class AuthModel(QObject):
                 self.loginFailed.emit("Usuario o contraseña incorrectos")
                 
         except Exception as e:
-            self.loginFailed.emit(f"Error: {str(e)}")
+            self.loginFailed.emit(f"Error interno. Intente nuevamente.")
             
     @Slot()
     def logout(self):

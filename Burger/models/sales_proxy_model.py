@@ -46,9 +46,7 @@ class SalesFilterProxyModel(QSortFilterProxyModel):
         
     def getTotalFiltered(self):
         """
-        Función que se encarga de filtar el total de los pedidos excluyendo los que están cancelados.
-        Itera con un for entre las filas y mientras que sean diferentes al estado "Cancelado",
-        se suman para dar el total del día.
+        Función que se encarga de calcular el total filtrado.
         """
         if not self.cache_valid:
             self.recalculate_total()

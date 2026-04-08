@@ -1,11 +1,13 @@
 import sqlite3
 import json
+import logging
 from datetime import datetime
 from pathlib import Path
 
 class DataBase:
     _instance = None
     _initialized = False
+    logger = logging.getLogger("DataBase")
     
     def __new__(cls):
         if cls._instance is None:
@@ -31,41 +33,86 @@ class DataBase:
             self.cursor = self.connection.cursor()
             self.create_tables()
             self.init_products_json()
+            self.init_promos_json()
         
-    def load_json_data(self):
-        json_path = Path(__file__).resolve().parent.parent / "data" / "products.json"
-        with open(json_path, "r", encoding="utf-8") as f:
-            return json.load(f)
+    def load_products_json(self):
+        try:
+            json_path = Path(__file__).resolve().parent.parent / "data" / "products.json"
+            with open(json_path, "r", encoding="utf-8") as f:
+                return json.load(f)
+            
+        except Exception as e:
+            self.logger.error(f"Error al cargar datos JSON(load_json_data): {e}")
+            return []
+        
+    def load_promos_json(self):
+        try:
+            json_path = Path(__file__).resolve().parent.parent / "data" / "promos.json"
+            with open(json_path, "r", encoding="utf-8") as f:
+                return json.load(f)
+            
+        except Exception as e:
+            self.logger.error(f"Error al cargar datos JSON(load_promos_json): {e}")
+            return []
+    
             
     def init_products_json(self):
-        self.cursor.execute('''
-                SELECT COUNT (*) FROM categories
-            ''')
-        
-        if self.cursor.fetchone()[0] > 0:
-            return
+        try:
+            self.cursor.execute('''
+                    SELECT COUNT (*) FROM categories
+                ''')
+            
+            if self.cursor.fetchone()[0] > 0:
+                return
 
-        data = self.load_json_data()
+            data = self.load_products_json()
+            
+            for category in data["categories"]:
+                self.cursor.execute('''
+                        INSERT INTO categories (id, name, icon) VALUES (?, ?, ?)''',
+                        (category["id"], category["name"], category["icon"])
+                    )
+                
+                if "notes" in category:
+                    for note in category["notes"]:
+                        self.cursor.execute('''
+                                    INSERT INTO categories_notes (category_id, notes) VALUES (?, ?)''',
+                                    (category["id"], note))
+                
+            for product in data["products"]:
+                self.cursor.execute('''
+                        INSERT INTO products (id, category_id, category_name, name, price, image) VALUES (?, ?, ?, ?, ?, ?)''',
+                        (product["id"], product["category_id"], product["category_name"], product["name"], product["price"], product["image"])
+                    )
+            
+            self.connection.commit()
         
-        for category in data["categories"]:
+        except Exception as e:
+            self.logger.error(f"Error al inicializar productos desde JSON(init_products_json): {e}")
+            return []
+        
+    def init_promos_json(self):
+        try:
             self.cursor.execute('''
-                    INSERT INTO categories (id, name, icon) VALUES (?, ?, ?)''',
-                    (category["id"], category["name"], category["icon"])
-                )
+                    SELECT COUNT (*) FROM promotions
+                ''')
             
-            if "notes" in category:
-                for note in category["notes"]:
-                    self.cursor.execute('''
-                                INSERT INTO categories_notes (category_id, notes) VALUES (?, ?)''',
-                                (category["id"], note))
+            if self.cursor.fetchone()[0] > 0:
+                return
             
-        for product in data["products"]:
-            self.cursor.execute('''
-                    INSERT INTO products (id, category_id, category_name, name, price, image) VALUES (?, ?, ?, ?, ?, ?)''',
-                    (product["id"], product["category_id"], product["category_name"], product["name"], product["price"], product["image"])
-                )
+            data = self.load_promos_json()
             
-        self.connection.commit()
+            for promo in data["promotions"]:
+                self.cursor.execute('''
+                        INSERT INTO promotions (id, category_id, name, description, price, icon) VALUES (?, ?, ?, ?, ?, ?)''',
+                        (promo["id"], promo["category_id"], promo["name"], promo["description"], promo["price"], promo["icon"])
+                    )
+                
+            self.connection.commit()
+                
+        except Exception as e:
+            self.logger.error(f"Error al inicializar promociones desde JSON(init_promos_json): {e}")
+            return []
         
     def create_tables(self):
         self.cursor.execute('''
@@ -110,8 +157,11 @@ class DataBase:
         self.cursor.execute('''
             CREATE TABLE IF NOT EXISTS promotions (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+                category_id INTEGER,
                 name TEXT NOT NULL,
+                description TEXT NOT NULL,
                 price REAL NOT NULL,
+                icon TEXT,
                 active INTEGER DEFAULT 1
                 )
             ''')
@@ -165,70 +215,116 @@ class DataBase:
             return self.cursor.fetchall()
         
         except sqlite3.Error as e:
-            print(f"Erro al obtener categorías: {e}")
+            self.logger.error(f"Error al obtener categorías(get_categories): {e}")
             return []
     
     def get_products(self):
-        self.cursor.execute('''
+        try:
+            self.cursor.execute('''
                 SELECT p.id, p.category_id, c.name as category_name, p.name, p.price, p.image FROM products p JOIN categories c ON p.category_id = c.id               
             ''')
+            return self.cursor.fetchall()
         
-        return self.cursor.fetchall()
-    
+        except sqlite3.Error as e:
+            self.logger.error(f"Error al obtener productos(get_products): {e}")
+            return []
+        
+    def get_promos(self):
+        try: 
+            self.cursor.execute('''
+                SELECT p.id, p.category_id, c.name as category_name, p.name, p.description, p.price, p.icon FROM promotions p JOIN categories c ON p.category_id = c.id WHERE p.active = 1 ORDER BY p.id                
+            ''')
+            return self.cursor.fetchall()
+        
+        except Exception as e:
+            self.logger.error(f"Error al obtener promociones(get_promos): {e}")
+            return []
+        
     def get_category_notes(self, category_id):
-        data = self.load_json_data()
+        try:
+            data = self.load_json_data()
+            
+            if not data or "categories" not in data:
+                return []
+            
+            for category in data["categories"]:
+                if category["id"] == category_id:
+                    return category.get("notes", [])
+                
+            return []
         
-        for category in data["categories"]:
-            if category["id"] == category_id:
-                return category.get("notes", [])
-        return []
+        except Exception as e:
+            self.logger.error(f"Error en al obtener notas de categoría(get_category_notes): {e}")
+            return []
     
     def insert_order(self, items, client_name, client_phone, payment_method, total, status="En curso"):
-        now = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
+        try:
+            now = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
         
-        self.cursor.execute('''
-                INSERT INTO orders (datetime, client_name, client_phone, payment_method, total, status) VALUES (?, ?, ?, ?, ? ,?)''',
-                (now, client_name, client_phone, payment_method, total, status))
-        
-        order_id = self.cursor.lastrowid
-        
-        for item in items:
             self.cursor.execute('''
-                INSERT INTO orders_items (order_id, item_id, item_type, category_id, category_name, name, notes, unit_price, quantity) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)''',
-                (order_id, item["item_id"],
-                 item["item_type"],
-                 item["category_id"],
-                 item["category_name"],
-                 item["name"],
-                 item["notes"],
-                 item["unit_price"],
-                 item["quantity"])
-                )
+                    INSERT INTO orders (datetime, client_name, client_phone, payment_method, total, status) VALUES (?, ?, ?, ?, ? ,?)''',
+                    (now, client_name, client_phone, payment_method, total, status))
+            
+            order_id = self.cursor.lastrowid
+            
+            for item in items:
+                self.cursor.execute('''
+                    INSERT INTO orders_items (order_id, item_id, item_type, category_id, category_name, name, notes, unit_price, quantity) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+                    (order_id, item["item_id"],
+                    item["item_type"],
+                    item["category_id"],
+                    item["category_name"],
+                    item["name"],
+                    item["notes"],
+                    item["unit_price"],
+                    item["quantity"])
+                    )
+            
+            self.connection.commit()
         
-        self.connection.commit()
+        except Exception as e:
+            self.logger.error(f"Error al insertar orden(insert_order): {e}")
+            self.connection.rollback()
+            return None
         
     def get_orders(self):
-        self.cursor.execute('''
-                SELECT id, datetime, client_name, client_phone, payment_method, total, status FROM orders ORDER BY id DESC
-            ''')
+        try:
+            self.cursor.execute('''
+                    SELECT id, datetime, client_name, client_phone, payment_method, total, status FROM orders ORDER BY id DESC
+                ''')
+            
+            return self.cursor.fetchall()
         
-        return self.cursor.fetchall()
+        except Exception as e:
+            self.logger.error(f"Error al obtener órdenes(get_orders): {e}")
+            return []
     
     def get_orders_items(self, order_id):
-        self.cursor.execute('''
-                SELECT id, item_id, item_type, category_id, category_name, name, notes, unit_price, quantity FROM orders_items WHERE order_id = ?''',
-                (order_id,))
+        try:
+            self.cursor.execute('''
+                    SELECT id, item_id, item_type, category_id, category_name, name, notes, unit_price, quantity FROM orders_items WHERE order_id = ?''',
+                    (order_id,))
+            
+            return self.cursor.fetchall()
         
-        return self.cursor.fetchall()
+        except Exception as e:
+            self.logger.error(f"Error al obtener items de orden(get_orders_items): {e}")
+            return []
     
     def update_status(self, order_id, status):
-        self.cursor.execute('''
-            UPDATE orders
-            SET status = ?
-            WHERE id= ? 
-            ''', (status, order_id))
+        try:
+            self.cursor.execute('''
+                UPDATE orders
+                SET status = ?
+                WHERE id= ? 
+                ''', (status, order_id))
+            
+            self.connection.commit()
+            return True
         
-        self.connection.commit()
+        except Exception as e:
+            self.logger.error(f"Error al actualizar el estado(update_status): {e}")
+            return False
         
     def close_system(self):
         if hasattr(self, "connection"):

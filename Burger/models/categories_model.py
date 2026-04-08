@@ -22,7 +22,7 @@ class CategoriesModel(QAbstractListModel):
         self.beginResetModel()
         self.categories.clear()
             
-        json_data = self.db.load_json_data()
+        json_data = self.db.load_products_json()
         
         for notes in json_data["categories"]:
             self.categories.append({

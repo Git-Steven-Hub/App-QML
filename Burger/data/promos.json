@@ -1,0 +1,10 @@
+{ "promotions": [
+
+    { "id": 1, "category_id": 1 ,"name": "Combo Clásico", "description": "Hamburguesa Clásica + Fritas Clásicas", "price": 10000, "icon": "🍔🍟" },
+    { "id": 2, "category_id": 1 ,"name": "Combo Especial", "description": "Hamburguesa Especial + Fritas Clásicas", "price": 15000, "icon": "🍔🍟" },
+    { "id": 3, "category_id": 1 ,"name": "Combo Premium", "description": "Hamburguesa Premium + Fritas Premium", "price": 18000, "icon": "🍔🍟" },
+
+    { "id": 4, "category_id": 2 ,"name": "Combo Pizza", "description": "Pizza común + Fritas", "price": 12000, "icon": "🍕🍟" }
+
+    ]
+}
