@@ -29,6 +29,17 @@ Dialog {
 
     property real total: 0
 
+    onClientDataChanged: {
+        if (clientData) {
+            clientName = clientData.name || ""
+            clientPhone = clientData.phone || ""
+            paymentMethod = clientData.method || ""
+            isDelivery = clientData.isDelivery || false
+            deliveryFee = clientData.deliveryFee || 0
+            total = clientData.total || 0
+        }
+    }
+
     signal confirm()
     signal cancel()
     signal confirmWithData(var clientData)
@@ -115,7 +126,7 @@ Dialog {
             }
 
             Text {
-                text: dialog.isDelivery ? "Delivery (+ $" + dialog.deliveryFee.toFixed(0) + ")" : "Retira en local"
+                text: dialog.isDelivery ? "Delivery (+ $" + dialog.deliveryFee.toFixed(2) + ")" : "Retira en local"
                 color: dialog.isDelivery ? Theme.success : "white"
                 font.pixelSize: 14
                 font.bold: dialog.isDelivery
@@ -145,7 +156,7 @@ Dialog {
                 spacing: 12
 
                 Text {
-                    text: Name + (notes && notes !== "Sin notas" ? " (nota)" : "")
+                    text: name + (notes && notes !== "Sin notas" ? " (nota)" : "")
                     color: "white"
                     font.pixelSize: 13
                     width: parent.width * 0.55
@@ -153,13 +164,13 @@ Dialog {
                 }
                 
                 Text {
-                    text: "x" + Quantity
+                    text: "x" + quantity
                     color: Theme.textMuted
                     width: 60
                     horizontalAlignment: Text.AlignHCenter
                 }
                 Text {
-                    text: "$" + Price
+                    text: "$" + price
                     color: Theme.accent
                     font.bold: true
                     width: 80

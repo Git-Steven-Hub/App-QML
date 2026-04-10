@@ -12,6 +12,7 @@ from models.products_model import ProductsModel
 from models.categories_model import CategoriesModel
 from models.promos_model import PromosModel
 from models.auth_model import AuthModel
+from models.config_model import ConfigModel
 from database.database_manager import DataBase
 from pathlib import Path
 
@@ -32,6 +33,7 @@ def main():
 
 	authmodel.create_admin()
  
+	config_model = ConfigModel()
 	products_model = ProductsModel()
 	promos_model = PromosModel()
 	categories_model = CategoriesModel()
@@ -42,6 +44,7 @@ def main():
 
 	proxy_model.setSourceModel(sales_model)
 
+	engine.rootContext().setContextProperty("ConfigModel", config_model)
 	engine.rootContext().setContextProperty("AuthModel", authmodel)
 	engine.rootContext().setContextProperty("ProductsModel", products_model)
 	engine.rootContext().setContextProperty("PromosModel", promos_model)
@@ -60,6 +63,7 @@ def main():
   		Función que se encarga de limpiar los modelos
   		y cerrar la conexión a la base de datos.
        """
+		engine.rootContext().setContextProperty("ConfigModel", None)
 		engine.rootContext().setContextProperty("AuthModel", None)
 		engine.rootContext().setContextProperty("ProductsModel", None)
 		engine.rootContext().setContextProperty("PromosModel", None)

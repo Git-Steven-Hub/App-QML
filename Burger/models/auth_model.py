@@ -8,12 +8,13 @@ class AuthModel(QObject):
     
     loginSuccess = Signal()
     loginFailed = Signal(str)
+    userChanged = Signal()
     logger = logging.getLogger("AuthModel")
     
     def __init__(self):
         super().__init__()
         self.db = DataBase()
-        self.curret_user = None
+        self.current_user = None
         
     def create_admin(self):
         try:
@@ -61,12 +62,13 @@ class AuthModel(QObject):
             user = self.db.cursor.fetchone()
             
             if user and self.verify_password(password, user[3]):
-                self.curret_user = {
+                self.current_user = {
                     "id": user[0],
                     "username": user[1],
                     "role": user[2]
                 }
                 self.loginSuccess.emit()
+                self.userChanged.emit()
             
             else:
                 self.loginFailed.emit("Usuario o contraseña incorrectos")
@@ -76,17 +78,28 @@ class AuthModel(QObject):
             
     @Slot()
     def logout(self):
-        self.curret_user = None
+        self.current_user = None
+        self.userChanged.emit()
+    
+    def get_current_username(self):
+        if self.current_user:
+            return self.current_user.get("username", "")
         
-    def get_current_user(self):
-        return self.curret_user
+        return ""
+    
+    def get_user_role(self):
+        if self.current_user:
+            return self.current_user.get("role", "")
+        
+        return ""
     
     def is_authenticated(self):
-        return self.curret_user is not None
+        return self.current_user is not None
     
-    def is_admin(self):
-        return self.curret_user and self.curret_user.get("role") == "administrador"
+    def get_is_admin(self):
+        return self.current_user and self.current_user.get("role") == "administrador"
     
-    currentUser = Property(QObject, get_current_user)
-    isLoggedIn = Property(bool, is_authenticated)
-    isAdmin = Property(bool, is_admin)
+    currentUsername = Property(str, get_current_username, notify=userChanged)
+    currentUserRole = Property(str, get_user_role, notify=userChanged)
+    isLoggedIn = Property(bool, is_authenticated, notify=userChanged)
+    isAdmin = Property(bool, get_is_admin, notify=userChanged)

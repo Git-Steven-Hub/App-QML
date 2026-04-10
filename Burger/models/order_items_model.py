@@ -30,14 +30,14 @@ class OrderItemsModel(QAbstractListModel):
         
         for row in rows: 
             item = {
-                "ItemId": row[0],
-                "ItemType": row[2],
+                "item_id": row[1],
+                "item_type": row[2],
                 "category_id": row[3],
                 "category_name": row[4],
-                "Name": row[5],
-                "Notes": row[6],
-                "UnitPrice": row[7],
-                "Quantity": row[8]
+                "name": row[5],
+                "notes": row[6],
+                "unit_price": row[7],
+                "quantity": row[8]
             }
             self.items.append(item)
             
@@ -55,10 +55,10 @@ class OrderItemsModel(QAbstractListModel):
         item = self.items[index.row()]
         
         if role == self.ItemIdRole:
-            return item["ItemId"]
+            return item["item_id"]
         
         if role == self.ItemTypeRole:
-            return item["ItemType"]
+            return item["item_type"]
         
         if role == self.CategoryIdRole:
             return item["category_id"]
@@ -67,25 +67,25 @@ class OrderItemsModel(QAbstractListModel):
             return item["category_name"]
         
         if role == self.NameRole:
-            return item["Name"]
+            return item["name"]
         
         if role == self.NotesRole:
-            return item["Notes"]
+            return item["notes"]
         
         if role == self.UnitPriceRole:
-            return item["UnitPrice"]
+            return item["unit_price"]
         
         if role == self.QuantityRole:
-            return item["Quantity"]
+            return item["quantity"]
         
     def roleNames(self):
         return {
-            self.ItemIdRole: QByteArray(b"ItemId"),
-            self.ItemTypeRole: QByteArray(b"ItemType"),
-            self.CategoryIdRole: QByteArray(b"categoryId"),
-            self.CategoryNameRole: QByteArray(b"categoryName"),
-            self.NameRole: QByteArray(b"Name"),
-            self.NotesRole: QByteArray(b"Notes"),
-            self.UnitPriceRole: QByteArray(b"UnitPrice"),
-            self.QuantityRole: QByteArray(b"Quantity"),
+            self.ItemIdRole: QByteArray(b"item_id"),
+            self.ItemTypeRole: QByteArray(b"item_type"),
+            self.CategoryIdRole: QByteArray(b"category_id"),
+            self.CategoryNameRole: QByteArray(b"category_name"),
+            self.NameRole: QByteArray(b"name"),
+            self.NotesRole: QByteArray(b"notes"),
+            self.UnitPriceRole: QByteArray(b"unit_price"),
+            self.QuantityRole: QByteArray(b"quantity"),
         }

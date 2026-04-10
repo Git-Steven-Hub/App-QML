@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import QtQuick.Effects
 import QtQuick.Controls.Material 2.12
 import "../theme"
 import "../components"
@@ -81,9 +80,9 @@ Item {
                         { view: "OrdersView", label: "Pedidos", icon: "qrc:/icons/shopping-cart.png" },
                         { view: "PromosView", label: "Promos", icon: "qrc:/icons/tag.png" },
                         { view: "SalesView", label: "Pedidos en curso", icon: "qrc:/icons/clock.png" },
-                        { view: "Menú", label: "Menú", icon: "qrc:/icons/shopping-cart.png" },
-                        { view: "Estadísticas", label: "Estadísticas", icon: "qrc:/icons/chart-bar.png" },
-                        { view: "Perfil", label: "Perfil", icon: "qrc:/icons/user.png" }
+                        // { view: "Menú", label: "Menú", icon: "qrc:/icons/shopping-cart.png" },
+                        // { view: "Estadísticas", label: "Estadísticas", icon: "qrc:/icons/chart-bar.png" },
+                        { view: "ProfileView", label: "Perfil", icon: "qrc:/icons/user.png" }
                     ]
 
                     spacing: 10
@@ -110,6 +109,10 @@ Item {
                         iconSource: modelData.icon
 
                         onClicked: {
+                            if (modelData.view === "OrdersView" || modelData.view === "PromosView") {
+                                CartModel.clear()
+                            }
+
                             root.currentView = modelData.view
                         }
                     }

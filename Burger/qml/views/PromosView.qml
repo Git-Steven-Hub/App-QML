@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
 import "../theme"
 import "../components"
@@ -72,7 +71,7 @@ Item {
         height: Math.min(580, parent.height * 0.85)
 
         onConfirmWithData: (data) => {
-            CartModel.confirmOrder(data.name, data.phone, data.method)
+            CartModel.confirmOrder(data.name, data.phone, data.method, data.isDelivery, data.deliveryFee)
             SalesModel.load_orders()
 
             cartSummary.resetInputs()

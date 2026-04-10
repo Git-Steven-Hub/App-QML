@@ -14,7 +14,7 @@ Rectangle {
     }
 
     property bool isDelivery: false
-        property real deliveryFee: 2000
+        property real deliveryFee: (ConfigModel ? (ConfigModel.deliveryFee ? ConfigModel.deliveryFee : 0) : 0)
 
     signal confirmOrder(var data)
     
@@ -149,14 +149,14 @@ Rectangle {
                         spacing: 2
 
                         Text {
-                            text: Name + (notes && notes !== "Sin notas" ? " (Con nota)" : "") 
+                            text: name + (notes && notes !== "Sin notas" ? " (Con nota)" : "") 
                             color: "white"
                             font.bold: true
                             font.pixelSize: 12
                         }
 
                         Text {
-                            text: "x" + Quantity + " - $" + Price
+                            text: "x" + quantity + " - $" + price
                             color: Theme.textMuted
                             font.pixelSize: 10
                         }
@@ -208,7 +208,7 @@ Rectangle {
                 }
 
                 Text {
-                    text: "$" + CartModel.total.toFixed(2)
+                    text: "$" + (CartModel ? CartModel.total : 0).toFixed(2)
                     color: Theme.success
                     font.bold: true
                 }
@@ -249,7 +249,7 @@ Rectangle {
                 }
                 
                 Text {
-                    text: "$" + (CartModel.total + (root.isDelivery ? root.deliveryFee : 0)).toFixed(2)
+                    text: "$" + (CartModel ? (CartModel.total + (root.isDelivery ? root.deliveryFee : 0)) : 0).toFixed(2)
                     color: Theme.accent
                     font.bold: true
                     font.pixelSize: 18
@@ -279,7 +279,8 @@ Rectangle {
                     phone: phone,
                     method: payment_method.currentText,
                     isDelivery: root.isDelivery,
-                    deliveryFee: root.isDelivery ? root.deliveryFee : 0
+                    deliveryFee: root.isDelivery ? root.deliveryFee : 0,
+                    total: CartModel.total + (root.isDelivery ? root.deliveryFee : 0)
                 }
 
                 root.confirmOrder(data)

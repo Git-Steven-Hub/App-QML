@@ -31,16 +31,16 @@ class CartModel(QAbstractListModel):
         item = self._items[index.row()]
         
         if role == self.IdRole:
-            return item["Id"]
+            return item["id"]
         
         if role == self.NameRole:
-            return item["Name"]
+            return item["name"]
         
         if role == self.PriceRole:
-            return item["Price"]
+            return item["price"]
         
         if role == self.QuantityRole:
-            return item["Quantity"]
+            return item["quantity"]
         
         if role == self.CategoryIdRole:
             return item["category_id"]
@@ -55,10 +55,10 @@ class CartModel(QAbstractListModel):
     
     def roleNames(self):
         return {
-            self.IdRole: QByteArray(b"Id"),
-            self.NameRole: QByteArray(b"Name"),
-            self.PriceRole: QByteArray(b"Price"),
-            self.QuantityRole: QByteArray(b"Quantity"),
+            self.IdRole: QByteArray(b"id"),
+            self.NameRole: QByteArray(b"name"),
+            self.PriceRole: QByteArray(b"price"),
+            self.QuantityRole: QByteArray(b"quantity"),
             self.CategoryIdRole: QByteArray(b"category_id"),
             self.CategoryNameRole: QByteArray(b"category_name"),
             self.NotesRole: QByteArray(b"notes"),
@@ -69,7 +69,7 @@ class CartModel(QAbstractListModel):
         Función que se encarga de tomar el total del pedido. 
         Suma el precio de cada ítem y lo multiplica por la cantidad de ítems tomados.
         """
-        return sum(item.get("Price", 0) * item.get("Quantity", 0) for item in self._items)
+        return sum(item.get("price", 0) * item.get("quantity", 0) for item in self._items)
     
     total = Property(float, getTotal, notify=totalChanged)
     
@@ -86,8 +86,8 @@ class CartModel(QAbstractListModel):
         price = float(price)
         
         for row, item in enumerate(self._items):
-            if item["Id"] == product_id and item["notes"] == notes:
-                item["Quantity"] += 1
+            if item["id"] == product_id and item["notes"] == notes:
+                item["quantity"] += 1
                 
                 index = self.index(row)
                 self.dataChanged.emit(index, index, [self.QuantityRole])
@@ -98,13 +98,13 @@ class CartModel(QAbstractListModel):
         self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount())
         
         self._items.append({
-            "Id": product_id,
-            "CategoryId": category_id,
-            "CategoryName": category_name,
-            "Name": name,
+            "id": product_id,
+            "category_id": category_id,
+            "category_name": category_name,
+            "name": name,
             "notes": notes,
-            "Price": price,
-            "Quantity": 1,
+            "price": price,
+            "quantity": 1,
         })
         self.endInsertRows()
         
@@ -118,27 +118,31 @@ class CartModel(QAbstractListModel):
             self.endRemoveRows()
             self.totalChanged.emit()
 
-    @Slot(str, str, str)
-    def confirmOrder(self, client_name="", client_phone="", payment_method="Efectivo"):
+    @Slot(str, str, str, bool, float)
+    def confirmOrder(self, client_name="", client_phone="", payment_method="Efectivo", is_delivery=False, delivery_fee=0):
         if not self._items:
             return
         
-        total = self.total
+        total = self.total 
+        
+        if is_delivery:
+            total += delivery_fee
+        
         items_to_save = []
         
         for item in self._items:
             items_to_save.append({
-                "item_id": item["Id"],
+                "item_id": item["id"],
                 "item_type": "product",
-                "category_id": item["CategoryId"],
-                "category_name": item["CategoryName"],
-                "name": item["Name"],
+                "category_id": item["category_id"],
+                "category_name": item["category_name"],
+                "name": item["name"],
                 "notes": item["notes"],
-                "unit_price": item["Price"],
-                "quantity": item["Quantity"]
+                "unit_price": item["price"],
+                "quantity": item["quantity"]
             })
         
-        self.db.insert_order(items_to_save, client_name, client_phone, payment_method, total)
+        self.db.insert_order(items_to_save, client_name, client_phone, payment_method, is_delivery, delivery_fee, total)
         
         self.clear()
 

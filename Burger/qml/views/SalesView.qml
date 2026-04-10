@@ -49,7 +49,7 @@ Item {
 
             Text {
                 id: totalText
-                text: "Total del día: $" + SalesProxy.totalFiltered
+                text: "Total del día: $" + (SalesProxy ? SalesProxy.totalFiltered : "0")
                 font.pixelSize: 20
                 color: Theme.accent
                 font.bold: true
@@ -90,16 +90,16 @@ Item {
 
                         text: {
                             if (modelData === "Todos")
-                                return modelData + " (" + SalesModel.totalCount + ")"
+                                return (SalesModel ? (modelData + " (" + SalesModel.totalCount + ")") : modelData)
 
                             if (modelData === "En curso")
-                                return modelData + " (" + SalesModel.enCursoCount + ")"
+                                return (SalesModel ? (modelData + " (" + SalesModel.enCursoCount + ")") : modelData)
 
                             if (modelData === "Completado")
-                                return modelData + " (" + SalesModel.completadoCount + ")"
+                                return (SalesModel ? (modelData + " (" + SalesModel.completadoCount + ")") : modelData)
 
                             if (modelData === "Cancelado")
-                                return modelData + " (" + SalesModel.canceladoCount + ")"   
+                                return (SalesModel ? (modelData + " (" + SalesModel.canceladoCount + ")") : modelData)   
                         }
                         baseColor: root.currentFilter === modelData ? Theme.primary : Theme.surfaceAlt
 
@@ -177,7 +177,7 @@ Item {
                             anchors.left: parent.left
                             anchors.top: parent.top
                             anchors.bottom: parent.bottom
-                            color: root.statusColor(Status)
+                            color: root.statusColor(status)
                         }
 
                         RowLayout {
@@ -191,13 +191,13 @@ Item {
                                 spacing: 2
 
                                 Text { 
-                                    text: "Pedido #" + orderId
+                                    text: "Pedido #" + order_id
                                     color: "white"
                                     font.bold: true
                                 }
 
                                 Text {
-                                    text: "Hora: " + Time
+                                    text: "Hora: " + time
                                     color: Theme.textMuted
                                     font.pixelSize: 12
                                 }
@@ -206,7 +206,7 @@ Item {
                             Item { Layout.fillWidth: true }
 
                             Text {
-                                text: "$" + Total
+                                text: "$" + total
                                 color: Theme.accent
                                 font.bold: true
                                 Layout.preferredWidth: 80
@@ -223,16 +223,18 @@ Item {
                             onClicked: {
                                 root.selectedIndex = index
                                 root.selectedOrder = {
-                                    orderId: orderId,
-                                    time: Time,
-                                    clientName: ClientName || "Sin nombre",
-                                    clientPhone: ClientPhone || "Sin teléfono",
-                                    clientPayment: PaymentMethod,
-                                    total: Total,
-                                    status: Status
+                                    orderId: order_id,
+                                    time: time,
+                                    clientName: client_name || "Sin nombre",
+                                    clientPhone: client_phone || "Sin teléfono",
+                                    clientPayment: payment_method,
+                                    is_delivery: is_delivery,
+                                    delivery_fee: delivery_fee,
+                                    total: total,
+                                    status: status
                                 }
 
-                                OrderItemsModel.load_items(orderId)
+                                OrderItemsModel.load_items(order_id)
                                 root.detailsOpen = true
                             }
                         }
@@ -425,9 +427,9 @@ Item {
                         }
 
                         Text {
-                            text: "Retira en local"
+                            text: root.selectedOrder && root.selectedOrder.is_delivery ? "Delivery" + " (+ $" + root.selectedOrder.delivery_fee + ")" : "Retira en local"
                             font.pixelSize: 12
-                            color: "white"
+                            color: root.selectedOrder && root.selectedOrder.is_delivery ? Theme.success: "white"
                         }
                     }
                 }
@@ -471,7 +473,7 @@ Item {
                         anchors.margins: 6
 
                         Text {
-                            text: model.categoryName
+                            text: model.category_name
                             color: Theme.textMuted
                             font.pixelSize: 10
                             font.bold: true
@@ -479,7 +481,7 @@ Item {
                         }
 
                         Text {
-                            text: model.Name
+                            text: model.name
                             color: Theme.textMuted
                             font.bold: true
                             font.pixelSize: 14
@@ -487,13 +489,13 @@ Item {
                         }
 
                         Text {
-                            text: "x" + model.Quantity
+                            text: "x" + model.quantity
                             color: Theme.textMuted
                             Layout.preferredWidth: 80
                         }
                         
                         Text {
-                            text: "$" + model.UnitPrice
+                            text: "$" + model.unit_price
                             color: Theme.accent
                         }
                     }

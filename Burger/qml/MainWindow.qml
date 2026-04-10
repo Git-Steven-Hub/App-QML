@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Controls.Material 2.12
 import "./theme"
 
 ApplicationWindow {
@@ -27,7 +26,7 @@ ApplicationWindow {
         opacity = 1.0
         stackView.push(Qt.resolvedUrl("views/LoginView.qml"))
     }
-    Material.theme: Material.Dark
+
     ////////////////////////NO TOCAR EL CODIGO DE ARRIBA////////////////////////
 
     StackView {

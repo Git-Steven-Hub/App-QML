@@ -11,8 +11,10 @@ class SalesModel(QAbstractListModel):
     ClientNameRole = Qt.UserRole + 3
     ClientPhoneRole = Qt.UserRole + 4
     PaymentMethodRole = Qt.UserRole + 5
-    TotalRole = Qt.UserRole + 6
-    StatusRole = Qt.UserRole + 7
+    IsDeliveryRole = Qt.UserRole + 6
+    DeliveryFeeRole = Qt.UserRole + 7
+    TotalRole = Qt.UserRole + 8
+    StatusRole = Qt.UserRole + 9
 
     def __init__(self):
         super().__init__()
@@ -47,18 +49,20 @@ class SalesModel(QAbstractListModel):
         
         for row in rows: 
             order = {
-                "orderId": row[0],
-                "Time": row[1],
-                "ClientName": row[2],
-                "ClientPhone": row[3],
-                "PaymentMethod": row[4],
-                "Total": row[5],
-                "Status": row[6]
+                "order_id": row[0],
+                "time": row[1],
+                "client_name": row[2],
+                "client_phone": row[3],
+                "payment_method": row[4],
+                "is_delivery": row[5],
+                "delivery_fee": row[6],
+                "total": row[7],
+                "status": row[8]
             }
             self.orders.append(order)
-            self.orders_id[order["orderId"]] = order
+            self.orders_id[order["order_id"]] = order
             
-            self.increment_counts(order["Status"])
+            self.increment_counts(order["status"])
             
         self.endResetModel()
         
@@ -111,25 +115,31 @@ class SalesModel(QAbstractListModel):
         order = self.orders[index.row()]
 
         if role == self.OrderIdRole:
-            return order["orderId"]
+            return order["order_id"]
         
         if role == self.TimeRole:
-            return order["Time"]
+            return order["time"]
         
         if role == self.ClientNameRole:
-            return order["ClientName"]
+            return order["client_name"]
         
         if role == self.ClientPhoneRole:
-            return order["ClientPhone"]
+            return order["client_phone"]
         
         if role == self.PaymentMethodRole:
-            return order["PaymentMethod"]
+            return order["payment_method"]
+        
+        if role == self.IsDeliveryRole:
+            return order["is_delivery"]
+        
+        if role == self.DeliveryFeeRole:
+            return order["delivery_fee"]
         
         if role == self.TotalRole:
-            return order["Total"]
+            return order["total"]
         
         if role == self.StatusRole:
-            return order["Status"]
+            return order["status"]
 
         return None
 
@@ -138,13 +148,15 @@ class SalesModel(QAbstractListModel):
         Función que se encarga de transformar los nombres en números para que QML los pueda leer.
         """
         return {
-            self.OrderIdRole: QByteArray(b"orderId"),
-            self.TimeRole: QByteArray(b"Time"),
-            self.ClientNameRole: QByteArray(b"ClientName"),
-            self.ClientPhoneRole: QByteArray(b"ClientPhone"),
-            self.PaymentMethodRole: QByteArray(b"PaymentMethod"),
-            self.TotalRole: QByteArray(b"Total"),
-            self.StatusRole: QByteArray(b"Status"),
+            self.OrderIdRole: QByteArray(b"order_id"),
+            self.TimeRole: QByteArray(b"time"),
+            self.ClientNameRole: QByteArray(b"client_name"),
+            self.ClientPhoneRole: QByteArray(b"client_phone"),
+            self.PaymentMethodRole: QByteArray(b"payment_method"),
+            self.IsDeliveryRole: QByteArray(b"is_delivery"),
+            self.DeliveryFeeRole: QByteArray(b"delivery_fee"),
+            self.TotalRole: QByteArray(b"total"),
+            self.StatusRole: QByteArray(b"status"),
         }
 
     @Slot(int)
@@ -159,10 +171,10 @@ class SalesModel(QAbstractListModel):
         if order is None:
             return
         
-        old_status = order["Status"]
+        old_status = order["status"]
         row = self.orders.index(order)
         
-        order["Status"] = "Completado"
+        order["status"] = "Completado"
         self.db.update_status(order_id, "Completado")
         
         self.decrement_counts(old_status)
@@ -187,10 +199,10 @@ class SalesModel(QAbstractListModel):
         if order is None:
             return
         
-        old_status = order["Status"]
+        old_status = order["status"]
         row = self.orders.index(order)
         
-        order["Status"] = "Cancelado"
+        order["status"] = "Cancelado"
         self.db.update_status(order_id, "Cancelado")
         
         self.decrement_counts(old_status)
@@ -223,4 +235,4 @@ class SalesModel(QAbstractListModel):
 
     @Slot(result=int)
     def totalDay(self):
-        return sum(o["Total"] for o in self.orders if o["Status"] != "Cancelado")
+        return sum(o["total"] for o in self.orders if o["status"] != "Cancelado")

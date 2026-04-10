@@ -184,6 +184,8 @@ class DataBase:
                 client_name TEXT,
                 client_phone INTEGER,
                 payment_method TEXT,
+                is_delivery BOOLEAN,
+                delivery_fee REAL,
                 total REAL,
                 status TEXT
                 )
@@ -242,7 +244,7 @@ class DataBase:
         
     def get_category_notes(self, category_id):
         try:
-            data = self.load_json_data()
+            data = self.load_products_json()
             
             if not data or "categories" not in data:
                 return []
@@ -257,13 +259,13 @@ class DataBase:
             self.logger.error(f"Error en al obtener notas de categoría(get_category_notes): {e}")
             return []
     
-    def insert_order(self, items, client_name, client_phone, payment_method, total, status="En curso"):
+    def insert_order(self, items, client_name, client_phone, payment_method, is_delivery, delivery_fee, total, status="En curso"):
         try:
             now = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
         
             self.cursor.execute('''
-                    INSERT INTO orders (datetime, client_name, client_phone, payment_method, total, status) VALUES (?, ?, ?, ?, ? ,?)''',
-                    (now, client_name, client_phone, payment_method, total, status))
+                    INSERT INTO orders (datetime, client_name, client_phone, payment_method, is_delivery, delivery_fee, total, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)''',
+                    (now, client_name, client_phone, payment_method, is_delivery, delivery_fee, total, status))
             
             order_id = self.cursor.lastrowid
             
@@ -290,7 +292,7 @@ class DataBase:
     def get_orders(self):
         try:
             self.cursor.execute('''
-                    SELECT id, datetime, client_name, client_phone, payment_method, total, status FROM orders ORDER BY id DESC
+                    SELECT id, datetime, client_name, client_phone, payment_method, is_delivery, delivery_fee, total, status FROM orders ORDER BY id DESC
                 ''')
             
             return self.cursor.fetchall()
